@@ -1,5 +1,14 @@
-import type { NextConfig } from "next";
+const nextConfig = {
+  // For Turbopack setups
+  experimental: {
+    turbo: {
+      resolveAlias: {
+        canvas: "./empty-module.ts",
+      },
+    },
+  },
 
-const nextConfig: NextConfig = {};
+  // For Next.js versions prior to v15
+};
 
 export default nextConfig;
