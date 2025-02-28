@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -15,11 +15,36 @@ export const UploadFileSection = () => {
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
 
+  // Load saved file on component mount
+  useEffect(() => {
+    const savedFile = localStorage.getItem("savedPDF");
+    if (savedFile) {
+      const dataUrl = savedFile;
+      fetch(dataUrl)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const file = new File([blob], "saved-document.pdf", {
+            type: "application/pdf",
+          });
+          setFile(file);
+        });
+    }
+  }, []);
+
+  const saveFile = (file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      localStorage.setItem("savedPDF", reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && selectedFile.type === "application/pdf") {
       setFile(selectedFile);
-      setPageNumber(1); // Reset to first page when new file is uploaded
+      saveFile(selectedFile);
+      setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
     }
@@ -31,7 +56,8 @@ export const UploadFileSection = () => {
 
     if (droppedFile && droppedFile.type === "application/pdf") {
       setFile(droppedFile);
-      setPageNumber(1); // Reset to first page when new file is dropped
+      saveFile(droppedFile);
+      setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
     }
@@ -53,6 +79,11 @@ export const UploadFileSection = () => {
     setNumPages(numPages);
   }
 
+  const handleRemoveFile = () => {
+    setFile(null);
+    localStorage.removeItem("savedPDF");
+  };
+
   return (
     <section className="w-[30vw] border-r border-border bg-secondary p-6 overflow-y-auto h-[calc(100vh-4rem)]">
       <h2 className="text-xl font-bold mb-6 text-primary-light">
@@ -67,7 +98,7 @@ export const UploadFileSection = () => {
           <div className="text-text-secondary">
             <p className="mb-2">Selected file: {file.name}</p>
             <button
-              onClick={() => setFile(null)}
+              onClick={handleRemoveFile}
               className="mt-2 px-4 py-2 bg-accent text-text-primary rounded-md hover:bg-accent-hover transition-colors"
             >
               Remove File
