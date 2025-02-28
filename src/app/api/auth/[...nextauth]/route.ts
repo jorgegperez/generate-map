@@ -22,7 +22,7 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          await connectDB();
+          const db = await connectDB();
           const user = await User.findOne({ email: credentials?.email });
 
           if (!user) return null;
@@ -73,7 +73,7 @@ const handler = NextAuth({
     async signIn({ user, account }) {
       if (account?.provider === "google") {
         try {
-          await connectDB();
+          const db = await connectDB();
           const userExists = await User.findOne({ email: user.email });
 
           if (!userExists) {

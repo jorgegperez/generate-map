@@ -1,21 +1,24 @@
 import mongoose from "mongoose";
 
-if (!process.env.MONGO_DB_URI) {
-  throw new Error("Please add your MONGO_DB_URI to .env.local");
+declare global {
+  // eslint-disable-next-line no-var
+  var mongooseConnection: mongoose.Connection | null;
 }
 
-export const connectDB = async () => {
-  try {
-    const { connection } = await mongoose.connect(
-      process.env.MONGO_DB_URI ?? ""
-    );
+const MONGO_DB_URI = process.env.MONGO_DB_URI as string;
 
-    if (connection.readyState === 1) {
-      console.log("MongoDB connected");
-      return Promise.resolve(true);
-    }
-  } catch (error) {
-    console.log("MongoDB connection error:", error);
-    return Promise.reject(error);
+if (!MONGO_DB_URI) {
+  throw new Error("Please define the MONGO_DB_URI environment variable");
+}
+
+export async function connectDB() {
+  if (global.mongooseConnection) {
+    return global.mongooseConnection;
   }
-};
+
+  const { connection } = await mongoose.connect(MONGO_DB_URI);
+  global.mongooseConnection = connection;
+  return connection;
+}
+
+connectDB().catch(console.error);

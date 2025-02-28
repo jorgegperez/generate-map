@@ -1,4 +1,3 @@
-import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models/User";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
@@ -7,9 +6,6 @@ export async function POST(req: Request) {
   try {
     const { email, password, name } = await req.json();
 
-    await connectDB();
-
-    // Verificar si el usuario ya existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
@@ -18,10 +14,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // Hash de la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Crear nuevo usuario
     await User.create({
       email,
       password: hashedPassword,
