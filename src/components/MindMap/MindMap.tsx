@@ -19,7 +19,12 @@ const initialNodes = [
   {
     id: "1",
     position: { x: 0, y: 0 },
-    data: { label: "Root Node", isRoot: true },
+    data: {
+      label: "Root Node",
+      isRoot: true,
+      borderColor: "default",
+      bgColor: "default",
+    },
     type: "mindmap",
   },
 ];
@@ -58,7 +63,12 @@ export default function MindMap() {
           id: newId,
           type: "mindmap",
           position,
-          data: { label: "New Node", isRoot: false },
+          data: {
+            label: "New Node",
+            isRoot: false,
+            borderColor: "default",
+            bgColor: "default",
+          },
         },
       ]);
 
@@ -81,14 +91,46 @@ export default function MindMap() {
       );
     };
 
+    const handleUpdateNodeColor = (
+      event: CustomEvent<{
+        nodeId: string;
+        borderColor?: string;
+        bgColor?: string;
+      }>
+    ) => {
+      const { nodeId, borderColor, bgColor } = event.detail;
+      setNodes((nds) =>
+        nds.map((node) =>
+          node.id === nodeId
+            ? {
+                ...node,
+                data: {
+                  ...node.data,
+                  ...(borderColor && { borderColor }),
+                  ...(bgColor && { bgColor }),
+                },
+              }
+            : node
+        )
+      );
+    };
+
     window.addEventListener("addChild", handleAddChild as EventListener);
     window.addEventListener("deleteNode", handleDeleteNode as EventListener);
+    window.addEventListener(
+      "updateNodeColor",
+      handleUpdateNodeColor as EventListener
+    );
 
     return () => {
       window.removeEventListener("addChild", handleAddChild as EventListener);
       window.removeEventListener(
         "deleteNode",
         handleDeleteNode as EventListener
+      );
+      window.removeEventListener(
+        "updateNodeColor",
+        handleUpdateNodeColor as EventListener
       );
     };
   }, [nodes, setNodes, setEdges]);
