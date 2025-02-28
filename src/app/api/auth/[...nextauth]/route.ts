@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
@@ -9,6 +10,10 @@ import type { IUser } from "@/types/next-auth";
 
 const handler = NextAuth({
   providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -64,6 +69,27 @@ const handler = NextAuth({
         session.user.name = token.name;
       }
       return session;
+    },
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        try {
+          await connectDB();
+          const userExists = await User.findOne({ email: user.email });
+
+          if (!userExists) {
+            const newUser = new User({
+              email: user.email,
+              name: user.name,
+              // For Google auth users, we don't need to store a password
+            });
+            await newUser.save();
+          }
+        } catch (error) {
+          console.log(error);
+          return false;
+        }
+      }
+      return true;
     },
   },
   secret: process.env.JWT_SECRET,
