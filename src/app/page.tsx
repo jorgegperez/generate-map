@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import UserMenu from "@/components/UserMenu";
 import { UploadFileSection } from "@/components/UploadFileSection";
+import MindMap from "@/components/MindMap/MindMap";
 
 export default async function Home() {
   const session = await getServerSession();
@@ -26,6 +27,7 @@ export default async function Home() {
       </nav>
       <main className="flex flex-1 w-full">
         <UploadFileSection />
+        <MindMap />
       </main>
     </div>
   );

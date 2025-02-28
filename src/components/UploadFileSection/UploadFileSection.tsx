@@ -85,7 +85,7 @@ export const UploadFileSection = () => {
   };
 
   return (
-    <section className="w-[30vw] border-r border-border bg-secondary p-6 overflow-y-auto h-[calc(100vh-4rem)]">
+    <section className="w-[30vw] flex-shrink-0 border-r border-border bg-secondary p-6 overflow-y-auto h-[calc(100vh-4rem)]">
       <h2 className="text-xl font-bold mb-6 text-primary-light">
         Upload Document
       </h2>
