@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "mongoose": "^8.11.0",
     "next": "15.1.7",
+    "next-auth": "^4.24.11",
+    "pdfjs-dist": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-pdf": "latest",
-    "pdfjs-dist": "latest"
+    "react-pdf": "latest"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
