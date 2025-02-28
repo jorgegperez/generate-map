@@ -16,8 +16,8 @@ export default function Home() {
       <UploadFileSection />
 
       {/* Main Content Section */}
-      <section className="flex-1 p-6 bg-gray-900">
-        <div className="h-full flex items-center justify-center text-gray-500">
+      <section className="flex-1 p-6 bg-secondary-dark">
+        <div className="h-full flex items-center justify-center text-text-muted">
           <p>Upload a PDF to generate your mind map</p>
         </div>
       </section>
