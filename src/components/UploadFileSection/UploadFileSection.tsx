@@ -54,7 +54,7 @@ export const UploadFileSection = () => {
   }
 
   return (
-    <section className="w-[30vw] border-r border-border bg-secondary p-6 overflow-y-auto">
+    <section className="w-[30vw] border-r border-border bg-secondary p-6 overflow-y-auto h-[calc(100vh-4rem)]">
       <h2 className="text-xl font-bold mb-6 text-primary-light">
         Upload Document
       </h2>
@@ -95,7 +95,7 @@ export const UploadFileSection = () => {
       </div>
 
       {file && (
-        <div className="mt-6 relative">
+        <div className="mt-6 relative h-full">
           <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
             <Page
               pageNumber={pageNumber}

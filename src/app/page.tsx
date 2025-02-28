@@ -11,7 +11,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-secondary-dark">
+    <div className="min-h-screen bg-secondary-dark flex flex-col">
       <nav className="bg-white dark:bg-gray-800 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -24,14 +24,8 @@ export default async function Home() {
           </div>
         </div>
       </nav>
-
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex">
+      <main className="flex flex-1 w-full">
         <UploadFileSection />
-        <section className="flex-1 p-6 bg-secondary-dark">
-          <div className="h-full flex items-center justify-center text-text-muted">
-            <p>Upload a PDF to generate your mind map</p>
-          </div>
-        </section>
       </main>
     </div>
   );
