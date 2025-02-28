@@ -1,15 +1,7 @@
 import { redirect } from "next/navigation";
-import { pdfjs } from "react-pdf";
-import "react-pdf/dist/Page/AnnotationLayer.css";
-import "react-pdf/dist/Page/TextLayer.css";
 import { getServerSession } from "next-auth/next";
-import LogoutButton from "@/components/LogoutButton";
+import UserMenu from "@/components/UserMenu";
 import { UploadFileSection } from "@/components/UploadFileSection";
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
 
 export default async function Home() {
   const session = await getServerSession();
@@ -28,12 +20,12 @@ export default async function Home() {
                 Bienvenido, {session.user?.name}
               </h1>
             </div>
-            <LogoutButton />
+            <UserMenu userName={session.user?.name} />
           </div>
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8 flex">
         <UploadFileSection />
         <section className="flex-1 p-6 bg-secondary-dark">
           <div className="h-full flex items-center justify-center text-text-muted">

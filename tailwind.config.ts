@@ -1,6 +1,8 @@
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 export default {
+  darkMode: ["class"],
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -10,30 +12,62 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#06b6d4", // cyan-500
-          hover: "#0891b2", // cyan-600
-          light: "#67e8f9", // cyan-300
+          DEFAULT: "hsl(var(--primary))",
+          hover: "#0891b2",
+          light: "#67e8f9",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
-          DEFAULT: "#1f2937", // gray-800
-          dark: "#111827", // gray-900
-          light: "#374151", // gray-700
+          DEFAULT: "hsl(var(--secondary))",
+          dark: "#111827",
+          light: "#374151",
+          foreground: "hsl(var(--secondary-foreground))",
         },
         accent: {
-          DEFAULT: "#dc2626", // red-600
-          hover: "#ef4444", // red-500
+          DEFAULT: "hsl(var(--accent))",
+          hover: "#ef4444",
+          foreground: "hsl(var(--accent-foreground))",
         },
         text: {
-          primary: "#f3f4f6", // gray-100
-          secondary: "#9ca3af", // gray-400
-          muted: "#6b7280", // gray-500
+          primary: "#f3f4f6",
+          secondary: "#9ca3af",
+          muted: "#6b7280",
         },
-        border: {
-          DEFAULT: "#4b5563", // gray-600
-          hover: "#06b6d4", // cyan-500
+        border: "hsl(var(--border))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
         },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        chart: {
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))",
+        },
+      },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
     },
   },
-  plugins: [],
+  plugins: [animate],
 } satisfies Config;
