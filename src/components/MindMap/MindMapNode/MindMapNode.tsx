@@ -9,11 +9,13 @@ import {
 } from "react";
 import { NodeData, NODE_FONT_SIZES, NODE_FONT_COLORS } from "@/constants/nodes";
 import { NodeActions } from "./NodeActions";
+import { ELayoutDirection } from "@/constants/mindmap";
 
 interface MindMapNodeProps extends NodeProps<Node<NodeData>> {
   onAddChild: (parentId: string) => void;
   onDeleteNode: (nodeId: string) => void;
   onUpdateNode: (nodeId: string, data: Partial<NodeData>) => void;
+  layout: ELayoutDirection;
 }
 
 export function MindMapNode({
@@ -23,6 +25,7 @@ export function MindMapNode({
   onAddChild,
   onDeleteNode,
   onUpdateNode,
+  layout,
 }: MindMapNodeProps) {
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showFontControls, setShowFontControls] = useState(false);
@@ -77,7 +80,12 @@ export function MindMapNode({
       }}
       onDoubleClick={handleDoubleClick}
     >
-      <Handle type="target" position={Position.Top} />
+      <Handle
+        type="target"
+        position={
+          layout === ELayoutDirection.Vertical ? Position.Top : Position.Left
+        }
+      />
       <textarea
         ref={textareaRef}
         value={data.label}
@@ -101,7 +109,14 @@ export function MindMapNode({
           data={data}
         />
       )}
-      <Handle type="source" position={Position.Bottom} />
+      <Handle
+        type="source"
+        position={
+          layout === ELayoutDirection.Vertical
+            ? Position.Bottom
+            : Position.Right
+        }
+      />
     </div>
   );
 }

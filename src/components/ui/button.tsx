@@ -19,7 +19,7 @@ const buttonVariants = cva(
         ghost: "hover:bg-secondary-light hover:text-text-primary",
         link: "text-primary-light underline-offset-4 hover:underline",
         iconRoundOutline:
-          "!p-0 !px-2 rounded-full bg-secondary-dark text-text-primary hover:bg-secondary-light  flex items-center justify-center",
+          "!py-0 !px-[10px] rounded-full bg-secondary-dark text-text-primary hover:bg-secondary-light  flex items-center justify-center",
       },
       size: {
         default: "h-9 px-4 py-2",

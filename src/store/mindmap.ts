@@ -8,7 +8,7 @@ import {
   applyNodeChanges,
   applyEdgeChanges,
 } from "@xyflow/react";
-import { NodeData } from "@/constants/nodes";
+import { NodeData, ELayoutDirection } from "@/constants";
 import { getLayoutedElements } from "@/utils/getLayoutedItems";
 
 interface MindMapState {
@@ -20,7 +20,8 @@ interface MindMapState {
   addChildNode: (parentId: string) => void;
   deleteNode: (nodeId: string) => void;
   updateNode: (nodeId: string, data: Partial<NodeData>) => void;
-  onLayoutChange: (direction: "TB" | "LR") => void;
+  layout: ELayoutDirection;
+  onLayoutChange: (direction: ELayoutDirection) => void;
 }
 
 const initialNodes: Node<NodeData>[] = [
@@ -38,13 +39,15 @@ const initialNodes: Node<NodeData>[] = [
 ];
 
 export const useMindMapStore = create<MindMapState>((set, get) => ({
+  layout: ELayoutDirection.Vertical,
   nodes: initialNodes,
   edges: [],
   onNodesChange: (changes) => {
     const newNodes = applyNodeChanges(changes, get().nodes) as Node<NodeData>[];
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       newNodes,
-      get().edges
+      get().edges,
+      get().layout
     );
     set({
       nodes: layoutedNodes,
@@ -55,7 +58,8 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
     const newEdges = applyEdgeChanges(changes, get().edges);
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       get().nodes,
-      newEdges
+      newEdges,
+      get().layout
     );
     set({
       nodes: layoutedNodes,
@@ -66,7 +70,8 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
     const newEdges = [...get().edges, connection as Edge];
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       get().nodes,
-      newEdges
+      newEdges,
+      get().layout
     );
     set({
       nodes: layoutedNodes,
@@ -76,7 +81,6 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
   addChildNode: (parentId) => {
     const parentNode = get().nodes.find((node) => node.id === parentId);
     if (!parentNode) return;
-    console.log(parentNode);
 
     const newNode = {
       id: `${Date.now()}`,
@@ -106,7 +110,8 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
 
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       newNodes,
-      newEdges
+      newEdges,
+      get().layout
     );
 
     set({
@@ -165,6 +170,7 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
     });
   },
   onLayoutChange: (direction) => {
+    set({ layout: direction });
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       get().nodes,
       get().edges,
