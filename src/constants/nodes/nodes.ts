@@ -3,6 +3,8 @@ export interface NodeData extends Record<string, unknown> {
   isRoot?: boolean;
   borderColor?: keyof typeof NODE_COLORS;
   bgColor?: keyof typeof NODE_BGS;
+  fontSize?: keyof typeof NODE_FONT_SIZES;
+  fontColor?: keyof typeof NODE_FONT_COLORS;
 }
 
 export const NODE_COLORS = {
@@ -21,4 +23,20 @@ export const NODE_BGS = {
   green: "bg-chart-1/20",
   purple: "bg-chart-2/20",
   orange: "bg-chart-3/20",
+} as const;
+
+export const NODE_FONT_SIZES = {
+  sm: "text-sm",
+  base: "text-base",
+  lg: "text-lg",
+  xl: "text-xl",
+} as const;
+
+export const NODE_FONT_COLORS = {
+  default: "text-text-primary",
+  red: "text-red-500",
+  blue: "text-blue-500",
+  green: "text-green-500",
+  yellow: "text-yellow-500",
+  purple: "text-purple-500",
 } as const;

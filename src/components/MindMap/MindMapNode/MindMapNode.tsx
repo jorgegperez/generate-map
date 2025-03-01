@@ -7,7 +7,13 @@ import {
   useRef,
   useLayoutEffect,
 } from "react";
-import { NodeData, NODE_COLORS, NODE_BGS } from "@/constants/nodes";
+import {
+  NodeData,
+  NODE_COLORS,
+  NODE_BGS,
+  NODE_FONT_SIZES,
+  NODE_FONT_COLORS,
+} from "@/constants/nodes";
 import { NodeActions } from "./NodeActions";
 
 interface MindMapNodeProps extends NodeProps<Node<NodeData>> {
@@ -25,6 +31,7 @@ export function MindMapNode({
   onUpdateNode,
 }: MindMapNodeProps) {
   const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showFontControls, setShowFontControls] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -67,7 +74,9 @@ export function MindMapNode({
     <div
       className={`relative px-4 py-2 shadow-lg rounded-lg border 
         ${NODE_COLORS[data.borderColor || "default"]} 
-        ${NODE_BGS[data.bgColor || "default"]} text-text-primary
+        ${NODE_BGS[data.bgColor || "default"]}
+        ${NODE_FONT_COLORS[data.fontColor || "default"]}
+        ${NODE_FONT_SIZES[data.fontSize || "base"]}
         ${selected ? "border-4" : "border-2"}`}
       onDoubleClick={handleDoubleClick}
     >
@@ -90,6 +99,8 @@ export function MindMapNode({
           onUpdateNode={onUpdateNode}
           showColorPicker={showColorPicker}
           setShowColorPicker={setShowColorPicker}
+          showFontControls={showFontControls}
+          setShowFontControls={setShowFontControls}
         />
       )}
       <Handle type="source" position={Position.Bottom} />
