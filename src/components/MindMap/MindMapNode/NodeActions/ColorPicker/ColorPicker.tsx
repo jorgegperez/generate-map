@@ -1,62 +1,77 @@
-import { NODE_BGS, NodeData } from "@/constants/nodes";
-
-import { NODE_COLORS } from "@/constants/nodes";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { NodeData } from "@/constants/nodes";
+import { ColorSelectorView } from "./ColorSelectorView";
 
 type Props = {
   id: string;
   onUpdateNode: (nodeId: string, data: Partial<NodeData>) => void;
-  setShowColorPicker: (show: boolean) => void;
+  data: NodeData;
 };
 
-export const ColorPicker = ({
-  id,
-  onUpdateNode,
-  setShowColorPicker,
-}: Props) => {
+export const ColorPicker = ({ id, onUpdateNode, data }: Props) => {
+  const onColorClick = (color: string, type: "bgColor" | "borderColor") => {
+    onUpdateNode(id, {
+      [type]: color,
+    });
+  };
+
   return (
     <div
       className="absolute left-0 top-full mt-2"
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="bg-secondary-dark shadow-lg rounded-lg border border-border p-2 space-y-2">
-        <div>
-          <div className="text-xs text-text-secondary mb-1">Border</div>
-          <div className="grid grid-cols-3 gap-1">
-            {Object.entries(NODE_COLORS).map(([colorName, borderColor]) => (
-              <button
-                key={colorName}
-                className={`w-6 h-6 rounded border-2 ${borderColor} bg-secondary-dark`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onUpdateNode(id, {
-                    borderColor: colorName as keyof typeof NODE_COLORS,
-                  });
-                  setShowColorPicker(false);
-                }}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <div className="text-xs text-text-secondary mb-1">Background</div>
-          <div className="grid grid-cols-3 gap-1">
-            {Object.entries(NODE_BGS).map(([colorName, bgColor]) => (
-              <button
-                key={colorName}
-                className={`w-6 h-6 rounded border border-border ${bgColor}`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onUpdateNode(id, {
-                    bgColor: colorName as keyof typeof NODE_BGS,
-                  });
-                  setShowColorPicker(false);
-                }}
-              />
-            ))}
-          </div>
-        </div>
+      <div>
+        <Tabs defaultValue="bgColor" className="w-[300px]">
+          <TabsList className="w-full grid-cols-2">
+            <TabsTrigger className="w-full" value="bgColor">
+              Background
+            </TabsTrigger>
+            <TabsTrigger className="w-full" value="borderColor">
+              Border
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="bgColor">
+            <ColorSelectorView
+              selectedColor={data.bgColor || "#FFFFFF"}
+              onColorClick={(color) => onColorClick(color, "bgColor")}
+              colors={BG_COLORS}
+            />
+          </TabsContent>
+          <TabsContent value="borderColor">
+            <ColorSelectorView
+              selectedColor={data.borderColor || "#000000"}
+              onColorClick={(color) => onColorClick(color, "borderColor")}
+              colors={BORDER_COLORS}
+            />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
 };
+
+const BORDER_COLORS = [
+  "#FF3B3B", // Vibrant red
+  "#FF8800", // Orange
+  "#FFCC00", // Golden yellow
+  "#00CC44", // Green
+  "#0088FF", // Blue
+  "#9933FF", // Purple
+  "#FF2D6C", // Hot pink
+  "#00CCCC", // Teal
+  "#FF4400", // Coral red,
+  "#000000", // Black
+];
+
+const BG_COLORS = [
+  "#FF3B3B60", // Vibrant red
+  "#FF880060", // Orange
+  "#FFCC0060", // Golden yellow
+  "#00CC4460", // Green
+  "#0088FF60", // Blue
+  "#9933FF60", // Purple
+  "#FF2D6C60", // Hot pink
+  "#00CCCC60", // Teal
+  "#FF440060", // Coral red,
+  "#00000060", // Black
+];

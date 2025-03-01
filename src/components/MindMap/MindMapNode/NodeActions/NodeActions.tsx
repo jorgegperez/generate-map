@@ -1,4 +1,4 @@
-import { Palette, Trash2, Plus, Type } from "lucide-react";
+import { Trash2, Plus, Type } from "lucide-react";
 import { ColorPicker } from "./ColorPicker";
 import { NodeData } from "@/constants/nodes";
 import { FontControls } from "./FontControls";
@@ -12,6 +12,7 @@ type Props = {
   setShowColorPicker: (show: boolean) => void;
   showFontControls: boolean;
   setShowFontControls: (show: boolean) => void;
+  data: NodeData;
 };
 
 export const NodeActions = ({
@@ -23,6 +24,7 @@ export const NodeActions = ({
   setShowColorPicker,
   showFontControls,
   setShowFontControls,
+  data,
 }: Props) => {
   return (
     <div className="absolute top-0 right-0 translate-x-full pl-2">
@@ -46,7 +48,15 @@ export const NodeActions = ({
             setShowColorPicker(!showColorPicker);
           }}
         >
-          <Palette size={16} />
+          <div className="w-6 h-6 rounded-full flex-shrink-0 bg-white">
+            <div
+              className="w-6 h-6 rounded-full flex-shrink-0 border"
+              style={{
+                backgroundColor: data.bgColor,
+                borderColor: data.borderColor,
+              }}
+            />
+          </div>
         </button>
         <button
           className="p-1.5 hover:bg-secondary-light rounded text-text-primary"
@@ -69,17 +79,14 @@ export const NodeActions = ({
         </button>
       </div>
       {showColorPicker && (
-        <ColorPicker
-          id={id}
-          onUpdateNode={onUpdateNode}
-          setShowColorPicker={setShowColorPicker}
-        />
+        <ColorPicker id={id} onUpdateNode={onUpdateNode} data={data} />
       )}
       {showFontControls && (
         <FontControls
           id={id}
           onUpdateNode={onUpdateNode}
           setShowFontControls={setShowFontControls}
+          data={data}
         />
       )}
     </div>

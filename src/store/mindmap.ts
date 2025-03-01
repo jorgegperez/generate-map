@@ -71,8 +71,8 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
       data: {
         label: "New Node",
         isRoot: false,
-        borderColor: "default",
-        bgColor: "default",
+        borderColor: parentNode.data.borderColor,
+        bgColor: parentNode.data.bgColor,
       },
     };
 
@@ -89,10 +89,25 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
   },
 
   deleteNode: (nodeId) => {
+    const getDescendantNodeIds = (currentNodeId: string): string[] => {
+      const childEdges = get().edges.filter(
+        (edge) => edge.source === currentNodeId
+      );
+      const childNodeIds = childEdges.map((edge) => edge.target);
+      const descendantIds = childNodeIds.flatMap((childId) =>
+        getDescendantNodeIds(childId)
+      );
+      return [...childNodeIds, ...descendantIds];
+    };
+
+    const nodeIdsToDelete = [nodeId, ...getDescendantNodeIds(nodeId)];
+
     set({
-      nodes: get().nodes.filter((node) => node.id !== nodeId),
+      nodes: get().nodes.filter((node) => !nodeIdsToDelete.includes(node.id)),
       edges: get().edges.filter(
-        (edge) => edge.source !== nodeId && edge.target !== nodeId
+        (edge) =>
+          !nodeIdsToDelete.includes(edge.source) &&
+          !nodeIdsToDelete.includes(edge.target)
       ),
     });
   },
