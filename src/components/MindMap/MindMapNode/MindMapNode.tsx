@@ -64,8 +64,6 @@ export function MindMapNode({
     }, 0);
   }, []);
 
-  console.log("data", data);
-
   return (
     <div
       className={`relative px-4 py-2 shadow-lg rounded-lg border 

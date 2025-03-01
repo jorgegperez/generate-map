@@ -9,6 +9,7 @@ import {
   applyEdgeChanges,
 } from "@xyflow/react";
 import { NodeData } from "@/constants/nodes";
+import { getLayoutedElements } from "@/utils/getLayoutedItems";
 
 interface MindMapState {
   nodes: Node<NodeData>[];
@@ -19,6 +20,7 @@ interface MindMapState {
   addChildNode: (parentId: string) => void;
   deleteNode: (nodeId: string) => void;
   updateNode: (nodeId: string, data: Partial<NodeData>) => void;
+  onLayoutChange: (direction: "TB" | "LR") => void;
 }
 
 const initialNodes: Node<NodeData>[] = [
@@ -28,7 +30,7 @@ const initialNodes: Node<NodeData>[] = [
     data: {
       label: "Root Node",
       isRoot: true,
-      borderColor: "default",
+      borderColor: "#00B0FF",
       bgColor: "default",
     },
     type: "mindmap",
@@ -38,35 +40,50 @@ const initialNodes: Node<NodeData>[] = [
 export const useMindMapStore = create<MindMapState>((set, get) => ({
   nodes: initialNodes,
   edges: [],
-
   onNodesChange: (changes) => {
+    const newNodes = applyNodeChanges(changes, get().nodes) as Node<NodeData>[];
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      newNodes,
+      get().edges
+    );
     set({
-      nodes: applyNodeChanges(changes, get().nodes) as Node<NodeData>[],
+      nodes: layoutedNodes,
+      edges: layoutedEdges,
     });
   },
-
   onEdgesChange: (changes) => {
+    const newEdges = applyEdgeChanges(changes, get().edges);
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      get().nodes,
+      newEdges
+    );
     set({
-      edges: applyEdgeChanges(changes, get().edges),
+      nodes: layoutedNodes,
+      edges: layoutedEdges,
     });
   },
-
   onConnect: (connection) => {
+    const newEdges = [...get().edges, connection as Edge];
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      get().nodes,
+      newEdges
+    );
     set({
-      edges: [...get().edges, connection as Edge],
+      nodes: layoutedNodes,
+      edges: layoutedEdges,
     });
   },
-
   addChildNode: (parentId) => {
     const parentNode = get().nodes.find((node) => node.id === parentId);
     if (!parentNode) return;
+    console.log(parentNode);
 
     const newNode = {
       id: `${Date.now()}`,
       type: "mindmap",
       position: {
         x: parentNode.position.x,
-        y: parentNode.position.y + 100,
+        y: parentNode.position.y + (parentNode.measured?.height ?? 0) + 100,
       },
       data: {
         label: "New Node",
@@ -80,14 +97,23 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
       id: `e${parentId}-${newNode.id}`,
       source: parentId,
       target: newNode.id,
+      animated: true,
+      type: "smoothstep",
     };
 
+    const newNodes = [...get().nodes, newNode as Node<NodeData>];
+    const newEdges = [...get().edges, newEdge];
+
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      newNodes,
+      newEdges
+    );
+
     set({
-      nodes: [...get().nodes, newNode as Node<NodeData>],
-      edges: [...get().edges, newEdge],
+      nodes: layoutedNodes,
+      edges: layoutedEdges,
     });
   },
-
   deleteNode: (nodeId) => {
     const getDescendantNodeIds = (currentNodeId: string): string[] => {
       const childEdges = get().edges.filter(
@@ -102,22 +128,48 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
 
     const nodeIdsToDelete = [nodeId, ...getDescendantNodeIds(nodeId)];
 
+    const newNodes = get().nodes.filter(
+      (node) => !nodeIdsToDelete.includes(node.id)
+    );
+    const newEdges = get().edges.filter(
+      (edge) =>
+        !nodeIdsToDelete.includes(edge.source) &&
+        !nodeIdsToDelete.includes(edge.target)
+    );
+
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      newNodes,
+      newEdges
+    );
+
     set({
-      nodes: get().nodes.filter((node) => !nodeIdsToDelete.includes(node.id)),
-      edges: get().edges.filter(
-        (edge) =>
-          !nodeIdsToDelete.includes(edge.source) &&
-          !nodeIdsToDelete.includes(edge.target)
-      ),
+      nodes: layoutedNodes,
+      edges: layoutedEdges,
     });
   },
   updateNode: (nodeId, newData) => {
+    const newNodes = get().nodes.map((node) =>
+      node.id === nodeId
+        ? { ...node, data: { ...node.data, ...newData } }
+        : node
+    );
+
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      newNodes,
+      get().edges
+    );
+
     set({
-      nodes: get().nodes.map((node) =>
-        node.id === nodeId
-          ? { ...node, data: { ...node.data, ...newData } }
-          : node
-      ),
+      nodes: layoutedNodes,
+      edges: layoutedEdges,
     });
+  },
+  onLayoutChange: (direction) => {
+    const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+      get().nodes,
+      get().edges,
+      direction
+    );
+    set({ nodes: layoutedNodes, edges: layoutedEdges });
   },
 }));

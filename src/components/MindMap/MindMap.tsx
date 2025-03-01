@@ -9,6 +9,7 @@ import {
   MiniMap,
   NodeProps,
   Node,
+  ConnectionLineType,
 } from "@xyflow/react";
 import { useMemo } from "react";
 import { MindMapNode } from "./MindMapNode/MindMapNode";
@@ -26,6 +27,7 @@ export default function MindMap() {
     addChildNode,
     deleteNode,
     updateNode,
+    onLayoutChange,
   } = useMindMapStore(
     (state) => ({
       nodes: state.nodes,
@@ -36,6 +38,7 @@ export default function MindMap() {
       addChildNode: state.addChildNode,
       deleteNode: state.deleteNode,
       updateNode: state.updateNode,
+      onLayoutChange: state.onLayoutChange,
     }),
     shallow
   );
@@ -63,7 +66,13 @@ export default function MindMap() {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeTypes}
+        fitView
+        connectionLineType={ConnectionLineType.SmoothStep}
       >
+        <div className="absolute top-20 right-4 flex flex-col gap-2 justify-center items-center bg-primary-500 rounded-md p-2">
+          <button onClick={() => onLayoutChange("TB")}>TB</button>
+          <button onClick={() => onLayoutChange("LR")}>LR</button>
+        </div>
         <Controls />
         <MiniMap />
         <Background bgColor="white" gap={12} size={1} />

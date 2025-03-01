@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import GoogleButton from "@/components/GoogleButton";
+import GoogleButton from "@/components/buttons/GoogleButton";
 
 export default function LoginPage() {
   const [error, setError] = useState("");

@@ -3,7 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import GoogleButton from "@/components/GoogleButton";
+import GoogleButton from "@/components/buttons/GoogleButton";
 
 export default function SignupPage() {
   const [error, setError] = useState("");
@@ -12,7 +12,7 @@ export default function SignupPage() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    
+
     try {
       const res = await fetch("/api/register", {
         method: "POST",
@@ -53,7 +53,9 @@ export default function SignupPage() {
               <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">O</span>
+              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500">
+                O
+              </span>
             </div>
           </div>
 
@@ -117,4 +119,4 @@ export default function SignupPage() {
       </div>
     </div>
   );
-} 
+}

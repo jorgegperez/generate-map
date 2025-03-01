@@ -42,7 +42,6 @@ export const FontControls = ({
           <Select
             defaultValue={data.fontSize || "base"}
             onValueChange={(value: keyof typeof NODE_FONT_SIZES) => {
-              console.log("value", value);
               onUpdateNode(id, { fontSize: value });
             }}
           >
