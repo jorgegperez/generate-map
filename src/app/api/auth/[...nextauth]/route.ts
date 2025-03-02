@@ -3,9 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
-import { JWT } from "next-auth/jwt";
-import type { Session } from "next-auth";
-import type { IUser } from "@/types/next-auth";
 import { createGoogleUser } from "@/app/actions/createUser";
 
 export const authOptions: AuthOptions = {
@@ -53,15 +50,22 @@ export const authOptions: AuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 días
   },
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user: IUser }) {
-      if (user) {
+    async jwt({ token, user, account }) {
+      if (account?.provider === "google" && user) {
+        const dbUser = await User.findOne({ email: user.email });
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.email = dbUser.email;
+          token.name = dbUser.name;
+        }
+      } else if (user) {
         token.id = user.id;
         token.email = user.email || "";
         token.name = user.name || "";
       }
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }) {
       if (token) {
         session.user.id = token.id;
         session.user.email = token.email;

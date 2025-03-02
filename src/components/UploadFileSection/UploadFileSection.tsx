@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { uploadFile } from "@/app/actions/uploadFile";
+import { uploadFile } from "@/app/actions/files/uploadFile";
+import { getFileByOwnerId } from "@/app/actions/files";
+import { useSession } from "next-auth/react";
+import { IFile } from "@/models/File";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -12,10 +15,21 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 ).toString();
 
 export const UploadFileSection = () => {
-  const [file, setFile] = useState<File | null>(null);
+  const [file, setFile] = useState<IFile | null>(null);
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [isUploading, setIsUploading] = useState(false);
+  const session = useSession();
+  const [pdfError, setPdfError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      if (!session?.data?.user?.id) return;
+      const file = await getFileByOwnerId(session.data.user.id);
+      if (file) setFile(file);
+    };
+    fetchFiles();
+  }, [session]);
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -29,7 +43,7 @@ export const UploadFileSection = () => {
         throw new Error(result.error);
       }
 
-      return result.file?.fileUrl;
+      return result.file;
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("Failed to upload file");
@@ -43,8 +57,8 @@ export const UploadFileSection = () => {
   ) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && selectedFile.type === "application/pdf") {
-      setFile(selectedFile);
-      await handleFileUpload(selectedFile);
+      const file = await handleFileUpload(selectedFile);
+      if (file) setFile(file);
       setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
@@ -56,8 +70,8 @@ export const UploadFileSection = () => {
     const droppedFile = event.dataTransfer.files?.[0];
 
     if (droppedFile && droppedFile.type === "application/pdf") {
-      setFile(droppedFile);
-      await handleFileUpload(droppedFile);
+      const file = await handleFileUpload(droppedFile);
+      if (file) setFile(file);
       setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
@@ -77,7 +91,15 @@ export const UploadFileSection = () => {
   };
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
+    setPdfError(null);
     setNumPages(numPages);
+  }
+
+  function onDocumentLoadError(error: Error): void {
+    console.error("Error loading PDF:", error);
+    setPdfError(
+      "Failed to load PDF. The link may have expired. Please try refreshing the page."
+    );
   }
 
   const handleRemoveFile = () => {
@@ -97,7 +119,7 @@ export const UploadFileSection = () => {
       >
         {file ? (
           <div className="text-text-secondary">
-            <p className="mb-2">Selected file: {file.name}</p>
+            <p className="mb-2">Selected file: {file.fileName}</p>
             <button
               onClick={handleRemoveFile}
               className="mt-2 px-4 py-2 bg-accent text-text-primary rounded-md hover:bg-accent-hover transition-colors"
@@ -127,14 +149,30 @@ export const UploadFileSection = () => {
       </div>
 
       {file && (
-        <div className="mt-6 relative h-full">
-          <Document file={file} onLoadSuccess={onDocumentLoadSuccess}>
-            <Page
-              pageNumber={pageNumber}
-              width={window.innerWidth * 0.3 - 48}
-              className="max-w-full"
-            />
-          </Document>
+        <div className="mt-6 relative">
+          {pdfError ? (
+            <div className="text-red-500 p-4 bg-red-100 rounded">
+              {pdfError}
+              <button
+                onClick={() => window.location.reload()}
+                className="ml-2 underline"
+              >
+                Refresh page
+              </button>
+            </div>
+          ) : (
+            <Document
+              file={file.fileUrl}
+              onLoadSuccess={onDocumentLoadSuccess}
+              onLoadError={onDocumentLoadError}
+            >
+              <Page
+                pageNumber={pageNumber}
+                width={window.innerWidth * 0.3 - 48}
+                className="max-w-full"
+              />
+            </Document>
+          )}
           <div className="absolute bottom-0 left-0 right-0 p-4 bg-secondary-dark/50 backdrop-blur-sm z-10">
             <p className="text-text-primary">
               Page {pageNumber} of {numPages}
