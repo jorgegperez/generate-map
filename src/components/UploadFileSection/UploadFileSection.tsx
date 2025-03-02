@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import { uploadFile } from "@/app/actions/uploadFile";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -16,23 +17,19 @@ export const UploadFileSection = () => {
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [isUploading, setIsUploading] = useState(false);
 
-  const uploadFile = async (file: File) => {
+  const handleFileUpload = async (file: File) => {
     try {
       setIsUploading(true);
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const result = await uploadFile(formData);
 
-      if (!response.ok) {
-        throw new Error("Upload failed");
+      if (!result.success) {
+        throw new Error(result.error);
       }
 
-      const data = await response.json();
-      return data.file.fileUrl;
+      return result.file?.fileUrl;
     } catch (error) {
       console.error("Error uploading file:", error);
       alert("Failed to upload file");
@@ -47,7 +44,7 @@ export const UploadFileSection = () => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && selectedFile.type === "application/pdf") {
       setFile(selectedFile);
-      await uploadFile(selectedFile);
+      await handleFileUpload(selectedFile);
       setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
@@ -60,7 +57,7 @@ export const UploadFileSection = () => {
 
     if (droppedFile && droppedFile.type === "application/pdf") {
       setFile(droppedFile);
-      await uploadFile(droppedFile);
+      await handleFileUpload(droppedFile);
       setPageNumber(1);
     } else {
       alert("Please upload a PDF file");

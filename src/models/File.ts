@@ -32,4 +32,16 @@ const fileSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+export interface IFile {
+  _id: string;
+  fileName: string;
+  fileKey: string;
+  fileUrl: string;
+  uploadedBy: string;
+  fileSize: number;
+  mimeType: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const File = mongoose.models.File || mongoose.model("File", fileSchema);

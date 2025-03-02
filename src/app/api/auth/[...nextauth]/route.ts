@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { JWT } from "next-auth/jwt";
 import type { Session } from "next-auth";
 import type { IUser } from "@/types/next-auth";
+import { createGoogleUser } from "@/app/actions/createUser";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -70,21 +71,12 @@ export const authOptions: AuthOptions = {
     },
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        try {
-          const userExists = await User.findOne({ email: user.email });
+        const result = await createGoogleUser({
+          email: user.email!,
+          name: user.name!,
+        });
 
-          if (!userExists) {
-            const newUser = new User({
-              email: user.email,
-              name: user.name,
-              // For Google auth users, we don't need to store a password
-            });
-            await newUser.save();
-          }
-        } catch (error) {
-          console.log(error);
-          return false;
-        }
+        return result.success;
       }
       return true;
     },

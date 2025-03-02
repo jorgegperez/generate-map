@@ -1,42 +1,41 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import GoogleButton from "@/components/buttons/GoogleButton";
+import { createUser } from "@/app/actions/createUser";
 
 export default function SignupPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-
+  async function handleSubmit(formData: FormData) {
     try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        body: JSON.stringify({
+      const result = await createUser(formData);
+
+      if (result.success) {
+        const signInResult = await signIn("credentials", {
           email: formData.get("email"),
           password: formData.get("password"),
-          name: formData.get("name"),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+          redirect: false,
+        });
 
-      if (res.ok) {
-        router.push("/login");
+        if (signInResult?.error) {
+          setError("Error al iniciar sesión");
+        } else {
+          router.push("/");
+          router.refresh();
+        }
       } else {
-        const data = await res.json();
-        setError(data.message || "Error al crear la cuenta");
+        setError(result.message);
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setError("Error al crear la cuenta");
     }
-  };
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-secondary-dark">
@@ -59,7 +58,7 @@ export default function SignupPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Nombre

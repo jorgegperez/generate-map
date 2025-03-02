@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
+"use server";
+
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getServerSession } from "next-auth";
-import { File } from "@/models/File";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { File, IFile } from "@/models/File";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/mongodb";
 
 const s3Client = new S3Client({
@@ -13,20 +14,18 @@ const s3Client = new S3Client({
   },
 });
 
-export async function POST(req: Request) {
+export async function uploadFile(formData: FormData) {
   try {
     await connectDB();
 
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return { success: false, error: "Unauthorized" };
     }
 
-    const formData = await req.formData();
     const file = formData.get("file") as File;
-
     if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 });
+      return { success: false, error: "No file provided" };
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
@@ -43,7 +42,6 @@ export async function POST(req: Request) {
 
     const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
 
-    // Save file reference to MongoDB
     const fileDoc = await File.create({
       fileName: file.name,
       fileKey,
@@ -53,15 +51,24 @@ export async function POST(req: Request) {
       mimeType: file.type,
     });
 
-    return NextResponse.json({
+    const cleanFileDoc: IFile = {
+      _id: fileDoc._id.toString(),
+      fileName: fileDoc.fileName,
+      fileKey: fileDoc.fileKey,
+      fileUrl: fileDoc.fileUrl,
+      uploadedBy: fileDoc.uploadedBy.toString(),
+      fileSize: fileDoc.fileSize,
+      mimeType: fileDoc.mimeType,
+      createdAt: fileDoc.createdAt?.toISOString(),
+      updatedAt: fileDoc.updatedAt?.toISOString(),
+    };
+
+    return {
       success: true,
-      file: fileDoc,
-    });
+      file: cleanFileDoc,
+    };
   } catch (error) {
     console.error("Upload error:", error);
-    return NextResponse.json(
-      { error: "Error uploading file" },
-      { status: 500 }
-    );
+    return { success: false, error: "Error uploading file" };
   }
 }
