@@ -81,7 +81,6 @@ async function createHierarchicalIndex(
     });
     hierarchicalSections = response.text;
   }
-  console.log(hierarchicalSections);
   return hierarchicalSections;
 }
 
