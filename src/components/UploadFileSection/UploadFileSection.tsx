@@ -8,6 +8,7 @@ import { uploadFile } from "@/app/actions/files";
 import { useSession } from "next-auth/react";
 import { useUserFile } from "@/hooks/files/useUserFile";
 import PacmanLoader from "react-spinners/PacmanLoader";
+import { useQueryClient } from "@tanstack/react-query";
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url
@@ -20,6 +21,7 @@ export const UploadFileSection = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const session = useSession();
   const { file, isLoading } = useUserFile(session?.data?.user?.id);
+  const queryClient = useQueryClient();
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -32,7 +34,7 @@ export const UploadFileSection = () => {
       if (!result.success) {
         throw new Error(result.error);
       }
-
+      queryClient.invalidateQueries({ queryKey: ["files"] });
       return result.file;
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -92,9 +94,7 @@ export const UploadFileSection = () => {
 
   return (
     <section className="w-[30vw] flex-shrink-0 border-r border-border bg-secondary p-6 overflow-y-auto h-[calc(100vh-4rem)]">
-      <h2 className="text-xl font-bold mb-6 text-primary">
-        Upload Document
-      </h2>
+      <h2 className="text-xl font-bold mb-6 text-primary">Upload Document</h2>
       <div
         className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary transition-colors"
         onDrop={handleDrop}
@@ -127,7 +127,7 @@ export const UploadFileSection = () => {
           </>
         )}
       </div>
-      {isLoading && (
+      {isUploading && (
         <div className="flex flex-col justify-center items-center w-full mt-6 gap-4">
           <PacmanLoader color="#00B0FF" />
           <div className="text-text-primary">Processing file...</div>
@@ -181,8 +181,8 @@ export const UploadFileSection = () => {
           </div>
         </div>
       )}
-      {isUploading && (
-        <div className="mt-4 text-text-secondary">Uploading file...</div>
+      {isLoading && (
+        <div className="mt-4 text-text-secondary">Loading file...</div>
       )}
     </section>
   );

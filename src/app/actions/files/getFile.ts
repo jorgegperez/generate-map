@@ -32,6 +32,8 @@ export async function getFileByOwnerId(ownerId: string) {
     uploadedBy: file.uploadedBy.toString(),
     fileSize: file.fileSize,
     mimeType: file.mimeType,
+    markdownText: file.markdownText,
+    processingStatus: file.processingStatus,
     createdAt: file.createdAt?.toISOString(),
     updatedAt: file.updatedAt?.toISOString(),
   };

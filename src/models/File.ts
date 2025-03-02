@@ -1,3 +1,4 @@
+import { EProcessingStatus } from "@/constants";
 import mongoose from "mongoose";
 
 const fileSchema = new mongoose.Schema(
@@ -28,6 +29,15 @@ const fileSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    markdownText: {
+      type: String,
+      required: true,
+    },
+    processingStatus: {
+      type: String,
+      enum: EProcessingStatus,
+      default: EProcessingStatus.PENDING,
+    },
   },
   { timestamps: true }
 );
@@ -40,8 +50,10 @@ export interface IFile {
   uploadedBy: string;
   fileSize: number;
   mimeType: string;
+  markdownText: string;
   createdAt: string;
   updatedAt: string;
+  processingStatus: EProcessingStatus;
 }
 
 export const File = mongoose.models.File || mongoose.model("File", fileSchema);

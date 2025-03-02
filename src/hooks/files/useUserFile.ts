@@ -10,7 +10,7 @@ export function useUserFile(ownerId?: string) {
     isPending,
     isError,
   } = useQuery({
-    queryKey: ["files"],
+    queryKey: ["files", ownerId],
     queryFn: () => getFileByOwnerId(ownerId!),
     enabled: !!ownerId,
     refetchOnWindowFocus: false,
