@@ -67,7 +67,10 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
     });
   },
   onConnect: (connection) => {
-    const newEdges = [...get().edges, connection as Edge];
+    const newEdges = [
+      ...get().edges,
+      { ...connection, animated: true, type: "smoothstep" } as Edge,
+    ];
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
       get().nodes,
       newEdges,
