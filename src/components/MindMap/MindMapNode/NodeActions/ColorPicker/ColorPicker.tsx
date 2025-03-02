@@ -10,9 +10,7 @@ type Props = {
 
 export const ColorPicker = ({ id, onUpdateNode, data }: Props) => {
   const onColorClick = (color: string, type: "bgColor" | "borderColor") => {
-    onUpdateNode(id, {
-      [type]: color,
-    });
+    onUpdateNode(id, { [type]: color });
   };
 
   return (
@@ -21,27 +19,27 @@ export const ColorPicker = ({ id, onUpdateNode, data }: Props) => {
       onClick={(e) => e.stopPropagation()}
     >
       <div>
-        <Tabs defaultValue="bgColor" className="w-[300px]">
+        <Tabs defaultValue="borderColor" className="w-[300px]">
           <TabsList className="w-full grid-cols-2">
-            <TabsTrigger className="w-full" value="bgColor">
-              Background
-            </TabsTrigger>
             <TabsTrigger className="w-full" value="borderColor">
               Border
             </TabsTrigger>
+            <TabsTrigger className="w-full" value="bgColor">
+              Background
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="bgColor">
-            <ColorSelectorView
-              selectedColor={data.bgColor || "#FFFFFF"}
-              onColorClick={(color) => onColorClick(color, "bgColor")}
-              colors={BG_COLORS}
-            />
-          </TabsContent>
           <TabsContent value="borderColor">
             <ColorSelectorView
               selectedColor={data.borderColor || "#000000"}
               onColorClick={(color) => onColorClick(color, "borderColor")}
               colors={BORDER_COLORS}
+            />
+          </TabsContent>
+          <TabsContent value="bgColor">
+            <ColorSelectorView
+              selectedColor={data.bgColor || "#FFFFFF"}
+              onColorClick={(color) => onColorClick(color, "bgColor")}
+              colors={BG_COLORS}
             />
           </TabsContent>
         </Tabs>

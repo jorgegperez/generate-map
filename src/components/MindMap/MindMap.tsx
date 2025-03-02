@@ -100,7 +100,7 @@ export default function MindMap() {
             />
           </Button>
         </div>
-        <Controls />
+        <Controls className="text-text-secondary" />
         <MiniMap />
         <Background bgColor="white" gap={12} size={1} />
       </ReactFlow>
