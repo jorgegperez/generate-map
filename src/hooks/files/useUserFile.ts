@@ -13,6 +13,9 @@ export function useUserFile(ownerId?: string) {
     queryKey: ["files"],
     queryFn: () => getFileByOwnerId(ownerId!),
     enabled: !!ownerId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
   });
 
   return {
