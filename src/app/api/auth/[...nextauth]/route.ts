@@ -1,14 +1,13 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { connectDB } from "@/lib/mongodb";
 import { User } from "@/models/User";
 import bcrypt from "bcryptjs";
 import { JWT } from "next-auth/jwt";
 import type { Session } from "next-auth";
 import type { IUser } from "@/types/next-auth";
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -22,7 +21,6 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         try {
-          const db = await connectDB();
           const user = await User.findOne({ email: credentials?.email });
 
           if (!user) return null;
@@ -50,7 +48,7 @@ const handler = NextAuth({
     signIn: "/login",
   },
   session: {
-    strategy: "jwt",
+    strategy: "jwt" as const,
     maxAge: 30 * 24 * 60 * 60, // 30 días
   },
   callbacks: {
@@ -73,7 +71,6 @@ const handler = NextAuth({
     async signIn({ user, account }) {
       if (account?.provider === "google") {
         try {
-          const db = await connectDB();
           const userExists = await User.findOne({ email: user.email });
 
           if (!userExists) {
@@ -93,6 +90,8 @@ const handler = NextAuth({
     },
   },
   secret: process.env.JWT_SECRET,
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

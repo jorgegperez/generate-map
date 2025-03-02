@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -14,49 +14,53 @@ export const UploadFileSection = () => {
   const [file, setFile] = useState<File | null>(null);
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
+  const [isUploading, setIsUploading] = useState(false);
 
-  // Load saved file on component mount
-  useEffect(() => {
-    const savedFile = localStorage.getItem("savedPDF");
-    if (savedFile) {
-      const dataUrl = savedFile;
-      fetch(dataUrl)
-        .then((res) => res.blob())
-        .then((blob) => {
-          const file = new File([blob], "saved-document.pdf", {
-            type: "application/pdf",
-          });
-          setFile(file);
-        });
+  const uploadFile = async (file: File) => {
+    try {
+      setIsUploading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const data = await response.json();
+      return data.file.fileUrl;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert("Failed to upload file");
+    } finally {
+      setIsUploading(false);
     }
-  }, []);
-
-  const saveFile = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      localStorage.setItem("savedPDF", reader.result as string);
-    };
-    reader.readAsDataURL(file);
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && selectedFile.type === "application/pdf") {
       setFile(selectedFile);
-      saveFile(selectedFile);
+      await uploadFile(selectedFile);
       setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
     }
   };
 
-  const handleDrop = useCallback((event: React.DragEvent) => {
+  const handleDrop = useCallback(async (event: React.DragEvent) => {
     event.preventDefault();
     const droppedFile = event.dataTransfer.files?.[0];
 
     if (droppedFile && droppedFile.type === "application/pdf") {
       setFile(droppedFile);
-      saveFile(droppedFile);
+      await uploadFile(droppedFile);
       setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
@@ -156,6 +160,10 @@ export const UploadFileSection = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {isUploading && (
+        <div className="mt-4 text-text-secondary">Uploading file...</div>
       )}
     </section>
   );
