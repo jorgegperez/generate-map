@@ -18,7 +18,11 @@ interface MindMapState {
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
-  addChildNode: (parentId: string) => void;
+  addChildNode: (
+    parentId: string,
+    data?: Partial<NodeData>,
+    id?: string
+  ) => void;
   deleteNode: (nodeId: string) => void;
   updateNode: (nodeId: string, data: Partial<NodeData>) => void;
   layout: ELayoutDirection;
@@ -40,7 +44,7 @@ export const DEFAULT_NODES: Node<NodeData>[] = [
 ];
 
 export const useMindMapStore = create<MindMapState>((set, get) => ({
-  layout: ELayoutDirection.Vertical,
+  layout: ELayoutDirection.Horizontal,
   nodes: DEFAULT_NODES,
   edges: [],
   setNodes: (nodes) => set({ nodes }),
@@ -83,12 +87,12 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
       edges: layoutedEdges,
     });
   },
-  addChildNode: (parentId) => {
+  addChildNode: (parentId, data, id) => {
     const parentNode = get().nodes.find((node) => node.id === parentId);
     if (!parentNode) return;
 
     const newNode = {
-      id: `${Date.now()}`,
+      id: id || `${Date.now()}`,
       type: "mindmap",
       position: {
         x: parentNode.position.x,
@@ -99,6 +103,7 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
         isRoot: false,
         borderColor: parentNode.data.borderColor,
         bgColor: parentNode.data.bgColor,
+        ...data,
       },
     };
 

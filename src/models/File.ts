@@ -31,7 +31,7 @@ const fileSchema = new mongoose.Schema(
     },
     markdownText: {
       type: String,
-      required: true,
+      required: false,
     },
     processingStatus: {
       type: String,
@@ -50,7 +50,7 @@ export interface IFile {
   uploadedBy: string;
   fileSize: number;
   mimeType: string;
-  markdownText: string;
+  markdownText?: string;
   createdAt: string;
   updatedAt: string;
   processingStatus: EProcessingStatus;

@@ -24,3 +24,29 @@ export const NODE_FONT_COLORS = {
   yellow: "text-yellow-500",
   purple: "text-purple-500",
 } as const;
+
+export const BORDER_COLORS = [
+  "#FF3B3B", // Vibrant red
+  "#FF8800", // Orange
+  "#FFCC00", // Golden yellow
+  "#00CC44", // Green
+  "#0088FF", // Blue
+  "#9933FF", // Purple
+  "#FF2D6C", // Hot pink
+  "#00CCCC", // Teal
+  "#FF4400", // Coral red,
+  "#000000", // Black
+];
+
+export const BG_COLORS = [
+  "#FF3B3B60", // Vibrant red
+  "#FF880060", // Orange
+  "#FFCC0060", // Golden yellow
+  "#00CC4460", // Green
+  "#0088FF60", // Blue
+  "#9933FF60", // Purple
+  "#FF2D6C60", // Hot pink
+  "#00CCCC60", // Teal
+  "#FF440060", // Coral red,
+  "#00000060", // Black
+];

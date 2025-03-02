@@ -9,6 +9,8 @@ import { useSession } from "next-auth/react";
 import { useUserFile } from "@/hooks/files/useUserFile";
 import PacmanLoader from "react-spinners/PacmanLoader";
 import { useQueryClient } from "@tanstack/react-query";
+
+
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url

@@ -6,14 +6,8 @@ import { File, IFile } from "@/models/File";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/mongodb";
 
-import { OpenAI, Settings, LlamaParseReader } from "llamaindex";
-import fs from "fs";
-import os from "os";
-import path from "path";
-import { writeFile } from "fs/promises";
 import { EProcessingStatus } from "@/constants";
-
-Settings.llm = new OpenAI({ model: "gpt-4o-mini" });
+import { extractMarkdown } from "./processFile";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION!,
@@ -50,11 +44,10 @@ export async function uploadFile(formData: FormData) {
       uploadedBy: session.user.id,
       fileSize: buffer.length,
       mimeType: file.type,
-      markdownText: "", // Initially empty
       processingStatus: EProcessingStatus.PENDING,
     });
 
-    processFileInBackground(buffer, file.name, fileDoc._id.toString()).catch(
+    extractMarkdown(buffer, file.name, fileDoc._id.toString()).catch(
       (error) => {
         console.error("Background processing error:", error);
       }
@@ -96,38 +89,4 @@ async function uploadFileToS3(file: File, session: Session, buffer: Buffer) {
   const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
 
   return { fileUrl, fileKey };
-}
-
-async function processFileInBackground(
-  buffer: Buffer,
-  fileName: string,
-  fileId: string
-) {
-  const tempDir = os.tmpdir();
-  const uniquePrefix =
-    Date.now() + "-" + Math.random().toString(36).substring(2);
-  const tempFilePath = path.join(tempDir, `${uniquePrefix}-${fileName}`);
-
-  try {
-    await writeFile(tempFilePath, buffer);
-    const reader = new LlamaParseReader({ resultType: "markdown" });
-    const documents = await reader.loadData(tempFilePath);
-    const markdownText = documents.map((doc) => doc.text).join("\n");
-
-    await File.findByIdAndUpdate(fileId, {
-      markdownText,
-      processingStatus: EProcessingStatus.COMPLETED,
-    });
-  } catch (error) {
-    console.error("Processing error:", error);
-    await File.findByIdAndUpdate(fileId, {
-      processingStatus: EProcessingStatus.FAILED,
-    });
-  } finally {
-    try {
-      if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
-    } catch (cleanupError) {
-      console.error("Error cleaning up temp file:", cleanupError);
-    }
-  }
 }
