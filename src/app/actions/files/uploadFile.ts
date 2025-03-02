@@ -11,7 +11,6 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { writeFile } from "fs/promises";
-import { fileProcessingQueue } from "@/lib/queue";
 import { EProcessingStatus } from "@/constants";
 
 Settings.llm = new OpenAI({ model: "gpt-4o-mini" });
@@ -36,60 +35,46 @@ export async function uploadFile(formData: FormData) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    const tempDir = os.tmpdir();
-    const uniquePrefix =
-      Date.now() + "-" + Math.random().toString(36).substring(2);
-    const tempFilePath = path.join(tempDir, `${uniquePrefix}-${file.name}`);
-
-    try {
-      if (buffer.length > 50 * 1024 * 1024) {
-        return { success: false, error: "File size exceeds limit" };
-      }
-      const { fileUrl, fileKey } = await uploadFileToS3(file, session, buffer);
-
-      await writeFile(tempFilePath, buffer);
-      const reader = new LlamaParseReader({ resultType: "markdown" });
-      const documents = await reader.loadData(tempFilePath);
-      const markdownText = documents.map((doc) => doc.text).join("\n");
-
-      const fileDoc = await File.create({
-        fileName: file.name,
-        fileKey,
-        fileUrl,
-        uploadedBy: session.user.id,
-        fileSize: buffer.length,
-        mimeType: file.type,
-        markdownText,
-        processingStatus: EProcessingStatus.PENDING,
-      });
-
-      await fileProcessingQueue.add("processMarkdown", {
-        fileId: fileDoc._id.toString(),
-        markdownText,
-      });
-
-      const cleanFileDoc: IFile = {
-        _id: fileDoc._id.toString(),
-        fileName: fileDoc.fileName,
-        fileKey: fileDoc.fileKey,
-        fileUrl: fileDoc.fileUrl,
-        uploadedBy: fileDoc.uploadedBy.toString(),
-        fileSize: fileDoc.fileSize,
-        mimeType: fileDoc.mimeType,
-        markdownText: fileDoc.markdownText,
-        processingStatus: fileDoc.processingStatus,
-        createdAt: fileDoc.createdAt?.toISOString(),
-        updatedAt: fileDoc.updatedAt?.toISOString(),
-      };
-
-      return { success: true, file: cleanFileDoc };
-    } finally {
-      try {
-        if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
-      } catch (cleanupError) {
-        console.error("Error cleaning up temp file:", cleanupError);
-      }
+    if (buffer.length > 50 * 1024 * 1024) {
+      return { success: false, error: "File size exceeds limit" };
     }
+
+    // Upload to S3 first
+    const { fileUrl, fileKey } = await uploadFileToS3(file, session, buffer);
+
+    // Create file document with initial state
+    const fileDoc = await File.create({
+      fileName: file.name,
+      fileKey,
+      fileUrl,
+      uploadedBy: session.user.id,
+      fileSize: buffer.length,
+      mimeType: file.type,
+      markdownText: "", // Initially empty
+      processingStatus: EProcessingStatus.PENDING,
+    });
+
+    processFileInBackground(buffer, file.name, fileDoc._id.toString()).catch(
+      (error) => {
+        console.error("Background processing error:", error);
+      }
+    );
+
+    const cleanFileDoc: IFile = {
+      _id: fileDoc._id.toString(),
+      fileName: fileDoc.fileName,
+      fileKey: fileDoc.fileKey,
+      fileUrl: fileDoc.fileUrl,
+      uploadedBy: fileDoc.uploadedBy.toString(),
+      fileSize: fileDoc.fileSize,
+      mimeType: fileDoc.mimeType,
+      markdownText: fileDoc.markdownText,
+      processingStatus: fileDoc.processingStatus,
+      createdAt: fileDoc.createdAt?.toISOString(),
+      updatedAt: fileDoc.updatedAt?.toISOString(),
+    };
+
+    return { success: true, file: cleanFileDoc };
   } catch (error) {
     console.error("Upload error:", error);
     return { success: false, error: "Error uploading file" };
@@ -111,4 +96,38 @@ async function uploadFileToS3(file: File, session: Session, buffer: Buffer) {
   const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileKey}`;
 
   return { fileUrl, fileKey };
+}
+
+async function processFileInBackground(
+  buffer: Buffer,
+  fileName: string,
+  fileId: string
+) {
+  const tempDir = os.tmpdir();
+  const uniquePrefix =
+    Date.now() + "-" + Math.random().toString(36).substring(2);
+  const tempFilePath = path.join(tempDir, `${uniquePrefix}-${fileName}`);
+
+  try {
+    await writeFile(tempFilePath, buffer);
+    const reader = new LlamaParseReader({ resultType: "markdown" });
+    const documents = await reader.loadData(tempFilePath);
+    const markdownText = documents.map((doc) => doc.text).join("\n");
+
+    await File.findByIdAndUpdate(fileId, {
+      markdownText,
+      processingStatus: EProcessingStatus.COMPLETED,
+    });
+  } catch (error) {
+    console.error("Processing error:", error);
+    await File.findByIdAndUpdate(fileId, {
+      processingStatus: EProcessingStatus.FAILED,
+    });
+  } finally {
+    try {
+      if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
+    } catch (cleanupError) {
+      console.error("Error cleaning up temp file:", cleanupError);
+    }
+  }
 }
