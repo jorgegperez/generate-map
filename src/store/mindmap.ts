@@ -13,6 +13,7 @@ import { getLayoutedElements } from "@/utils/getLayoutedItems";
 
 interface MindMapState {
   nodes: Node<NodeData>[];
+  setNodes: (nodes: Node<NodeData>[]) => void;
   edges: Edge[];
   onNodesChange: (changes: NodeChange[]) => void;
   onEdgesChange: (changes: EdgeChange[]) => void;
@@ -24,7 +25,7 @@ interface MindMapState {
   onLayoutChange: (direction: ELayoutDirection) => void;
 }
 
-const initialNodes: Node<NodeData>[] = [
+export const DEFAULT_NODES: Node<NodeData>[] = [
   {
     id: "1",
     position: { x: 0, y: 0 },
@@ -40,8 +41,9 @@ const initialNodes: Node<NodeData>[] = [
 
 export const useMindMapStore = create<MindMapState>((set, get) => ({
   layout: ELayoutDirection.Vertical,
-  nodes: initialNodes,
+  nodes: DEFAULT_NODES,
   edges: [],
+  setNodes: (nodes) => set({ nodes }),
   onNodesChange: (changes) => {
     const newNodes = applyNodeChanges(changes, get().nodes) as Node<NodeData>[];
     const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(

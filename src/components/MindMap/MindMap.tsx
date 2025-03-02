@@ -11,10 +11,10 @@ import {
   Node,
   ConnectionLineType,
 } from "@xyflow/react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { MindMapNode } from "./MindMapNode/MindMapNode";
 import { NodeData, ELayoutDirection } from "@/constants";
-import { useMindMapStore } from "@/store/mindmap";
+import { DEFAULT_NODES, useMindMapStore } from "@/store/mindmap";
 import { shallow } from "zustand/shallow";
 import { Button } from "../ui/button";
 import { GitFork } from "lucide-react";
@@ -31,6 +31,7 @@ export default function MindMap() {
     deleteNode,
     updateNode,
     onLayoutChange,
+    setNodes,
   } = useMindMapStore(
     (state) => ({
       nodes: state.nodes,
@@ -43,9 +44,16 @@ export default function MindMap() {
       deleteNode: state.deleteNode,
       updateNode: state.updateNode,
       onLayoutChange: state.onLayoutChange,
+      setNodes: state.setNodes,
     }),
     shallow
   );
+
+  useEffect(() => {
+    if (nodes.length === 0) {
+      setNodes([...DEFAULT_NODES]);
+    }
+  }, [nodes, setNodes]);
 
   const nodeTypes = useMemo(
     () => ({
@@ -61,8 +69,6 @@ export default function MindMap() {
     }),
     [addChildNode, deleteNode, updateNode, layout]
   );
-
-  console.log(layout);
 
   return (
     <div className="h-[calc(100vh-4rem)] flex w-full">
