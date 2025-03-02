@@ -1,35 +1,25 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { uploadFile } from "@/app/actions/files/uploadFile";
-import { getFileByOwnerId } from "@/app/actions/files";
+import { uploadFile } from "@/app/actions/files";
 import { useSession } from "next-auth/react";
-import { IFile } from "@/models/File";
-
+import { useUserFile } from "@/hooks/files/useUserFile";
+import PacmanLoader from "react-spinners/PacmanLoader";
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url
 ).toString();
 
 export const UploadFileSection = () => {
-  const [file, setFile] = useState<IFile | null>(null);
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [isUploading, setIsUploading] = useState(false);
-  const session = useSession();
   const [pdfError, setPdfError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchFiles = async () => {
-      if (!session?.data?.user?.id) return;
-      const file = await getFileByOwnerId(session.data.user.id);
-      if (file) setFile(file);
-    };
-    fetchFiles();
-  }, [session]);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const session = useSession();
+  const { file, isLoading } = useUserFile(session?.data?.user?.id);
 
   const handleFileUpload = async (file: File) => {
     try {
@@ -57,8 +47,7 @@ export const UploadFileSection = () => {
   ) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile && selectedFile.type === "application/pdf") {
-      const file = await handleFileUpload(selectedFile);
-      if (file) setFile(file);
+      await handleFileUpload(selectedFile);
       setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
@@ -70,8 +59,7 @@ export const UploadFileSection = () => {
     const droppedFile = event.dataTransfer.files?.[0];
 
     if (droppedFile && droppedFile.type === "application/pdf") {
-      const file = await handleFileUpload(droppedFile);
-      if (file) setFile(file);
+      await handleFileUpload(droppedFile);
       setPageNumber(1);
     } else {
       alert("Please upload a PDF file");
@@ -102,14 +90,9 @@ export const UploadFileSection = () => {
     );
   }
 
-  const handleRemoveFile = () => {
-    setFile(null);
-    localStorage.removeItem("savedPDF");
-  };
-
   return (
     <section className="w-[30vw] flex-shrink-0 border-r border-border bg-secondary p-6 overflow-y-auto h-[calc(100vh-4rem)]">
-      <h2 className="text-xl font-bold mb-6 text-primary-light">
+      <h2 className="text-xl font-bold mb-6 text-primary">
         Upload Document
       </h2>
       <div
@@ -120,10 +103,7 @@ export const UploadFileSection = () => {
         {file ? (
           <div className="text-text-secondary">
             <p className="mb-2">Selected file: {file.fileName}</p>
-            <button
-              onClick={handleRemoveFile}
-              className="mt-2 px-4 py-2 bg-accent text-text-primary rounded-md hover:bg-accent-hover transition-colors"
-            >
+            <button className="mt-2 px-4 py-2 bg-accent text-text-primary rounded-md hover:bg-accent-hover transition-colors">
               Remove File
             </button>
           </div>
@@ -147,8 +127,13 @@ export const UploadFileSection = () => {
           </>
         )}
       </div>
-
-      {file && (
+      {isLoading && (
+        <div className="flex flex-col justify-center items-center w-full mt-6 gap-4">
+          <PacmanLoader color="#00B0FF" />
+          <div className="text-text-primary">Processing file...</div>
+        </div>
+      )}
+      {file && !isLoading && (
         <div className="mt-6 relative">
           {pdfError ? (
             <div className="text-red-500 p-4 bg-red-100 rounded">
@@ -196,7 +181,6 @@ export const UploadFileSection = () => {
           </div>
         </div>
       )}
-
       {isUploading && (
         <div className="mt-4 text-text-secondary">Uploading file...</div>
       )}
