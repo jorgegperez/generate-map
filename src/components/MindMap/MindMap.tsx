@@ -13,52 +13,33 @@ import {
 } from "@xyflow/react";
 import { useEffect, useMemo } from "react";
 import { MindMapNode } from "./MindMapNode/MindMapNode";
-import {
-  NodeData,
-  ELayoutDirection,
-  ISection,
-  BG_COLORS,
-  BORDER_COLORS,
-} from "@/constants";
+import { NodeData, ELayoutDirection } from "@/constants";
 import { DEFAULT_NODES, useMindMapStore } from "@/store/mindmap";
-import { shallow } from "zustand/shallow";
 import { Button } from "../ui/button";
 import { GitFork, Plus } from "lucide-react";
-import { createMindMap } from "@/app/actions/files/processFile";
+
 import { useUserFile } from "@/hooks/files/useUserFile";
 import { useSession } from "next-auth/react";
-
+import { useProcessFile } from "@/hooks/files/useProcessFile";
+import { HashLoader } from "react-spinners";
 export default function MindMap() {
   const session = useSession();
+  const { generateMindMap, isWorking } = useProcessFile();
   const { file } = useUserFile(session?.data?.user?.id);
+
   const {
+    layout,
     nodes,
     edges,
-    layout,
-    onNodesChange,
-    onEdgesChange,
+    setNodes,
     onConnect,
-    addChildNode,
     deleteNode,
     updateNode,
+    addChildNode,
+    onNodesChange,
+    onEdgesChange,
     onLayoutChange,
-    setNodes,
-  } = useMindMapStore(
-    (state) => ({
-      nodes: state.nodes,
-      edges: state.edges,
-      layout: state.layout,
-      onNodesChange: state.onNodesChange,
-      onEdgesChange: state.onEdgesChange,
-      onConnect: state.onConnect,
-      addChildNode: state.addChildNode,
-      deleteNode: state.deleteNode,
-      updateNode: state.updateNode,
-      onLayoutChange: state.onLayoutChange,
-      setNodes: state.setNodes,
-    }),
-    shallow
-  );
+  } = useMindMapStore();
 
   useEffect(() => {
     if (nodes.length === 0) {
@@ -81,58 +62,13 @@ export default function MindMap() {
     [addChildNode, deleteNode, updateNode, layout]
   );
 
-  const handleProcessFile = async () => {
+  const handleProcessFile = () => {
     if (!file?.markdownText) return;
-    const structure = await createMindMap(file.markdownText);
-
-    const addLevelNodes = (
-      section: ISection,
-      parentId?: string,
-      childIndex: number = 0
-    ) => {
-      let nodeId: string;
-
-      if (section.level === 1) {
-        const rootNode = {
-          id: crypto.randomUUID(),
-          position: { x: 0, y: 0 },
-          data: {
-            label: section.title,
-            isRoot: true,
-            borderColor: "#00B0FF",
-            bgColor: "default",
-          },
-          type: "mindmap",
-        };
-        setNodes([rootNode]);
-        nodeId = rootNode.id;
-      } else if (section.level === 2) {
-        nodeId = crypto.randomUUID();
-        const colorIndex = childIndex % BG_COLORS.length;
-        const bgColor = BG_COLORS[colorIndex];
-        const borderColor = BORDER_COLORS[colorIndex];
-        addChildNode(
-          parentId!,
-          { label: section.title, bgColor, borderColor },
-          nodeId
-        );
-      } else {
-        nodeId = crypto.randomUUID();
-        addChildNode(parentId!, { label: section.title }, nodeId);
-      }
-
-      section.children.forEach((child, index) => {
-        addLevelNodes(child, nodeId, index);
-      });
-    };
-
-    for (const section of structure) {
-      addLevelNodes(section);
-    }
+    generateMindMap(file.markdownText);
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex w-full">
+    <div className="h-[calc(100vh-4rem)] flex w-full relative">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -144,7 +80,11 @@ export default function MindMap() {
         connectionLineType={ConnectionLineType.SmoothStep}
       >
         <div className="absolute top-20 right-4 flex flex-col gap-2 justify-center items-center rounded-md py-4 px-2 z-10">
-          <Button variant="iconRoundOutline" onClick={handleProcessFile}>
+          <Button
+            variant="iconRoundOutline"
+            onClick={handleProcessFile}
+            disabled={isWorking}
+          >
             <Plus />
           </Button>
           <Button
@@ -174,6 +114,11 @@ export default function MindMap() {
         <MiniMap />
         <Background bgColor="white" gap={12} size={1} />
       </ReactFlow>
+      {isWorking && (
+        <div className="absolute top-0 left-0 w-full h-full bg-black/50 z-100 flex justify-center items-center">
+          <HashLoader color="#00A3FF" size={100} />
+        </div>
+      )}
     </div>
   );
 }
