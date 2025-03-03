@@ -22,6 +22,7 @@ import { useUserFile } from "@/hooks/files/useUserFile";
 import { useSession } from "next-auth/react";
 import { useProcessFile } from "@/hooks/files/useProcessFile";
 import { HashLoader } from "react-spinners";
+
 export default function MindMap() {
   const session = useSession();
   const { generateMindMap, isWorking } = useProcessFile();
