@@ -1,5 +1,6 @@
 export interface NodeData extends Record<string, unknown> {
   label: string;
+  description?: string;
   isRoot?: boolean;
   borderColor?: string;
   bgColor?: string;

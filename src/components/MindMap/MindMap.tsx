@@ -42,6 +42,8 @@ export default function MindMap() {
     onLayoutChange,
   } = useMindMapStore();
 
+  console.log(nodes);
+
   useEffect(() => {
     if (nodes.length === 0) {
       setNodes([...DEFAULT_NODES]);

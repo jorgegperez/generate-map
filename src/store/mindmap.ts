@@ -35,6 +35,7 @@ export const DEFAULT_NODES: Node<NodeData>[] = [
     position: { x: 0, y: 0 },
     data: {
       label: "Root Node",
+      description: "This is the root node",
       isRoot: true,
       borderColor: "#00B0FF",
       bgColor: "default",
@@ -103,6 +104,7 @@ export const useMindMapStore = create<MindMapState>((set, get) => ({
         isRoot: false,
         borderColor: parentNode.data.borderColor,
         bgColor: parentNode.data.bgColor,
+        description: "This is a new node",
         ...data,
       },
     };

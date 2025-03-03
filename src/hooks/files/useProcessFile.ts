@@ -30,6 +30,7 @@ export const useProcessFile = () => {
         position: { x: 0, y: 0 },
         data: {
           label: section.title,
+          description: section.content,
           isRoot: true,
           borderColor: "#00B0FF",
           bgColor: "default",
@@ -45,12 +46,21 @@ export const useProcessFile = () => {
       const borderColor = BORDER_COLORS[colorIndex];
       addChildNode(
         parentId!,
-        { label: section.title, bgColor, borderColor },
+        {
+          label: section.title,
+          bgColor,
+          borderColor,
+          description: section.content,
+        },
         nodeId
       );
     } else {
       nodeId = crypto.randomUUID();
-      addChildNode(parentId!, { label: section.title }, nodeId);
+      addChildNode(
+        parentId!,
+        { label: section.title, description: section.content },
+        nodeId
+      );
     }
 
     section.children.forEach((child, index) => {

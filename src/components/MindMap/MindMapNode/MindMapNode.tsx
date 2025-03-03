@@ -10,6 +10,8 @@ import {
 import { NodeData, NODE_FONT_SIZES, NODE_FONT_COLORS } from "@/constants/nodes";
 import { NodeActions } from "./NodeActions";
 import { ELayoutDirection } from "@/constants/mindmap";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface MindMapNodeProps extends NodeProps<Node<NodeData>> {
   onAddChild: (parentId: string) => void;
@@ -30,6 +32,7 @@ export function MindMapNode({
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [showFontControls, setShowFontControls] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useLayoutEffect(() => {
@@ -109,6 +112,24 @@ export function MindMapNode({
           data={data}
         />
       )}
+      {isExpanded && data.description && (
+        <div className="text-sm text-text-secondary-dark">
+          {data.description}
+        </div>
+      )}
+      <div className="absolute bottom-[-12px] left-0 right-0 flex justify-center items-center z-10">
+        <Button
+          variant="iconRoundOutline"
+          size="mini"
+          onClick={() => setIsExpanded(!isExpanded)}
+        >
+          {isExpanded ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <ChevronDown className="w-4 h-4" />
+          )}
+        </Button>
+      </div>
       <Handle
         type="source"
         position={
