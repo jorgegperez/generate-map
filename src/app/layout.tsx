@@ -6,8 +6,16 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Mind Map Generator",
-  description: "Upload PDFs and generate beautiful mind maps using AI",
+  title: "YourBrand - The Modern Solution for Your Needs",
+  description:
+    "Meet the modern standard for your needs. Beautiful out of the box, easy to maintain, and built to convert users.",
+  keywords: "your, relevant, keywords, here",
+  openGraph: {
+    title: "YourBrand - The Modern Solution for Your Needs",
+    description:
+      "Meet the modern standard for your needs. Beautiful out of the box, easy to maintain, and built to convert users.",
+    images: ["/og-image.jpg"],
+  },
 };
 
 export default function RootLayout({
@@ -16,10 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body
-        className={`${inter.className} bg-gray-900 text-gray-100 min-h-screen`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>
     </html>

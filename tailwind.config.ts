@@ -13,26 +13,21 @@ export default {
       colors: {
         primary: {
           DEFAULT: "hsl(var(--primary))",
-          hover: "#0891b2",
-          light: "#67e8f9",
           foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
-          dark: "#111827",
-          light: "#374151",
           foreground: "hsl(var(--secondary-foreground))",
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",
-          hover: "#ef4444",
           foreground: "hsl(var(--accent-foreground))",
         },
         text: {
-          primary: "#f3f4f6",
-          secondary: "#9ca3af",
-          muted: "#6b7280",
+          primary: "hsl(var(--foreground))",
+          secondary: "hsl(var(--muted))",
         },
+        orange: "hsl(var(--orange))",
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
