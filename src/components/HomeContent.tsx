@@ -9,6 +9,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLocaleStore } from "@/store/useLocaleStore";
 import { useEffect, useState } from "react";
 import { i18n as i18nConfig } from "@/lib/i18n-config";
+import Loading from "@/app/loading";
 
 export function HomeContent({ session }: { session: Session | null }) {
   const { t, i18n } = useTranslation();
@@ -27,10 +28,7 @@ export function HomeContent({ session }: { session: Session | null }) {
     }
   }, [locale, i18n]);
 
-  // Return a loading state or simplified content during SSR
-  if (!isClient) {
-    return <div suppressHydrationWarning>Loading...</div>;
-  }
+  if (!isClient) return <Loading />;
 
   return (
     <div

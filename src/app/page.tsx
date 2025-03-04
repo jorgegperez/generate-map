@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 export default async function Home() {
   const session = await getServerSession();
 
+  await new Promise((resolve) => setTimeout(resolve, 10000));
+
   return (
     <>
       <Script
