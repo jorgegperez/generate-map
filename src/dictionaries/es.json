@@ -8,7 +8,7 @@
             "signup": "Registrarse"
         },
         "hero": {
-            "title": "La solución que necesitas, sin esfuerzo",
+            "title": "La solución que necesitas, <emphasis>sin esfuerzo</emphasis>",
             "subtitle": "Conoce el estándar moderno para tus necesidades. Hermoso desde el primer momento, fácil de mantener y diseñado para convertir usuarios.",
             "getStarted": "Comenzar",
             "getDemo": "Ver demo"

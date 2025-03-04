@@ -8,7 +8,7 @@
             "signup": "Sign up"
         },
         "hero": {
-            "title": "The solution you need, effortlessly",
+            "title": "The solution you need, <emphasis>effortlessly</emphasis>",
             "subtitle": "Meet the modern standard for your needs. Beautiful out of the box, easy to maintain, and built to convert users.",
             "getStarted": "Get Started",
             "getDemo": "Get a demo"

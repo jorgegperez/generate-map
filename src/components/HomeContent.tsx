@@ -1,28 +1,15 @@
 "use client";
 
 import { Session } from "next-auth";
-import { useEffect, useState } from "react";
-import { useLocaleStore } from "@/store/useLocaleStore";
-import { getDictionary } from "@/lib/dictionary";
-import Loading from "@/app/loading";
+import { useTranslation, Trans } from "react-i18next";
 import UserMenu from "@/components/UserMenu";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import Link from "next/link";
-
-// Type for the dictionary
-type Dictionary = Awaited<ReturnType<typeof getDictionary>>;
+import "@/lib/i18n-client";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 export function HomeContent({ session }: { session: Session | null }) {
-  const [dictionary, setDictionary] = useState<Dictionary | null>(null);
-  const locale = useLocaleStore((state) => state.locale);
-
-  useEffect(() => {
-    getDictionary().then(setDictionary);
-  }, [locale]);
-
-  if (!dictionary) {
-    return <Loading />;
-  }
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -38,13 +25,13 @@ export function HomeContent({ session }: { session: Session | null }) {
                 href="/documentation"
                 className="text-muted-foreground hover:text-foreground"
               >
-                {dictionary.landing.navigation.documentation}
+                {t("landing.navigation.documentation")}
               </Link>
               <Link
                 href="/resources"
                 className="text-muted-foreground hover:text-foreground"
               >
-                {dictionary.landing.navigation.resources}
+                {t("landing.navigation.resources")}
               </Link>
               <Link
                 href="/pricing"
@@ -53,6 +40,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                 Pricing
               </Link>
               <ThemeToggle />
+              <LanguageSwitcher />
               {session ? (
                 <UserMenu userName={session.user?.name} />
               ) : (
@@ -81,30 +69,35 @@ export function HomeContent({ session }: { session: Session | null }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="pt-32 pb-20 text-center">
             <h1 className="text-[60px] md:text-6xl font-bold text-foreground mb-6">
-              {dictionary.landing.hero.title}
+              <Trans
+                i18nKey="landing.hero.title"
+                components={{
+                  emphasis: <span className="text-primary" />,
+                }}
+              />
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              {dictionary.landing.hero.subtitle}
+              {t("landing.hero.subtitle")}
             </p>
             <div className="flex justify-center gap-4">
               <Link
                 href="/get-started"
                 className="bg-primary text-primary-foreground px-6 py-3 rounded-md text-lg font-semibold hover:bg-primary/90"
               >
-                Get Started
+                {t("landing.hero.getStarted")}
               </Link>
               <Link
                 href="/demo"
                 className="bg-card text-foreground border border-border px-6 py-3 rounded-md text-lg font-semibold hover:bg-card/80"
               >
-                Get a demo
+                {t("landing.hero.getDemo")}
               </Link>
             </div>
           </div>
 
           {/* Features Grid */}
           <section
-            aria-label={dictionary.landing.features.title}
+            aria-label={t("landing.features.title")}
             className="grid grid-cols-1 md:grid-cols-3 gap-8 py-16"
           >
             <article className="bg-card rounded-lg p-6">
@@ -124,10 +117,10 @@ export function HomeContent({ session }: { session: Session | null }) {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                {dictionary.landing.features.lightning.title}
+                {t("landing.features.lightning.title")}
               </h3>
               <p className="text-muted-foreground">
-                {dictionary.landing.features.lightning.description}
+                {t("landing.features.lightning.description")}
               </p>
             </article>
 
@@ -148,10 +141,10 @@ export function HomeContent({ session }: { session: Session | null }) {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                {dictionary.landing.features.customizable.title}
+                {t("landing.features.customizable.title")}
               </h3>
               <p className="text-muted-foreground">
-                {dictionary.landing.features.customizable.description}
+                {t("landing.features.customizable.description")}
               </p>
             </article>
 
@@ -172,10 +165,10 @@ export function HomeContent({ session }: { session: Session | null }) {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-2">
-                {dictionary.landing.features.security.title}
+                {t("landing.features.security.title")}
               </h3>
               <p className="text-muted-foreground">
-                {dictionary.landing.features.security.description}
+                {t("landing.features.security.description")}
               </p>
             </article>
           </section>
@@ -184,16 +177,16 @@ export function HomeContent({ session }: { session: Session | null }) {
           <section aria-label="Call to Action" className="py-16">
             <div className="bg-card rounded-2xl p-8 md:p-12 text-center">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                {dictionary.landing.cta.title}
+                {t("landing.cta.title")}
               </h2>
               <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-                {dictionary.landing.cta.subtitle}
+                {t("landing.cta.subtitle")}
               </p>
               <Link
                 href="/signup"
                 className="bg-primary text-primary-foreground px-8 py-3 rounded-md text-lg font-semibold hover:bg-primary/90 inline-block"
               >
-                {dictionary.landing.cta.button}
+                {t("landing.cta.button")}
               </Link>
             </div>
           </section>
@@ -206,7 +199,7 @@ export function HomeContent({ session }: { session: Session | null }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-foreground font-semibold mb-4">
-                {dictionary.landing.footer.product.title}
+                {t("landing.footer.product.title")}
               </h3>
               <ul className="space-y-2">
                 <li>
@@ -214,7 +207,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/features"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.product.features}
+                    {t("landing.footer.product.features")}
                   </Link>
                 </li>
                 <li>
@@ -222,7 +215,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/pricing"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.product.pricing}
+                    {t("landing.footer.product.pricing")}
                   </Link>
                 </li>
                 <li>
@@ -230,14 +223,14 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/documentation"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.product.documentation}
+                    {t("landing.footer.product.documentation")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
               <h3 className="text-foreground font-semibold mb-4">
-                {dictionary.landing.footer.company.title}
+                {t("landing.footer.company.title")}
               </h3>
               <ul className="space-y-2">
                 <li>
@@ -245,7 +238,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/about"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.company.about}
+                    {t("landing.footer.company.about")}
                   </Link>
                 </li>
                 <li>
@@ -253,7 +246,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/blog"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.company.blog}
+                    {t("landing.footer.company.blog")}
                   </Link>
                 </li>
                 <li>
@@ -261,14 +254,14 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/careers"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.company.careers}
+                    {t("landing.footer.company.careers")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
               <h3 className="text-foreground font-semibold mb-4">
-                {dictionary.landing.footer.resources.title}
+                {t("landing.footer.resources.title")}
               </h3>
               <ul className="space-y-2">
                 <li>
@@ -276,7 +269,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/community"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.resources.community}
+                    {t("landing.footer.resources.community")}
                   </Link>
                 </li>
                 <li>
@@ -284,7 +277,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/contact"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.resources.contact}
+                    {t("landing.footer.resources.contact")}
                   </Link>
                 </li>
                 <li>
@@ -292,14 +285,14 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/status"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.resources.status}
+                    {t("landing.footer.resources.status")}
                   </Link>
                 </li>
               </ul>
             </div>
             <div>
               <h3 className="text-foreground font-semibold mb-4">
-                {dictionary.landing.footer.legal.title}
+                {t("landing.footer.legal.title")}
               </h3>
               <ul className="space-y-2">
                 <li>
@@ -307,7 +300,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/privacy"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.legal.privacy}
+                    {t("landing.footer.legal.privacy")}
                   </Link>
                 </li>
                 <li>
@@ -315,7 +308,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/terms"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.legal.terms}
+                    {t("landing.footer.legal.terms")}
                   </Link>
                 </li>
                 <li>
@@ -323,7 +316,7 @@ export function HomeContent({ session }: { session: Session | null }) {
                     href="/security"
                     className="text-muted-foreground hover:text-foreground"
                   >
-                    {dictionary.landing.footer.legal.security}
+                    {t("landing.footer.legal.security")}
                   </Link>
                 </li>
               </ul>
