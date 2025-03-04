@@ -1,0 +1,63 @@
+{
+    "landing": {
+        "navigation": {
+            "documentation": "Documentación",
+            "resources": "Recursos",
+            "pricing": "Precios",
+            "login": "Iniciar sesión",
+            "signup": "Registrarse"
+        },
+        "hero": {
+            "title": "La solución que necesitas, sin esfuerzo",
+            "subtitle": "Conoce el estándar moderno para tus necesidades. Hermoso desde el primer momento, fácil de mantener y diseñado para convertir usuarios.",
+            "getStarted": "Comenzar",
+            "getDemo": "Ver demo"
+        },
+        "features": {
+            "title": "Características",
+            "lightning": {
+                "title": "Velocidad Relámpago",
+                "description": "Experimenta un rendimiento ultrarrápido con nuestra infraestructura optimizada."
+            },
+            "customizable": {
+                "title": "Totalmente Personalizable",
+                "description": "Adapta cada aspecto para que coincida con tu marca y requisitos."
+            },
+            "security": {
+                "title": "Seguridad Empresarial",
+                "description": "Seguridad de nivel bancario para mantener tus datos seguros y protegidos."
+            }
+        },
+        "cta": {
+            "title": "¿Listo para empezar?",
+            "subtitle": "Únete a miles de usuarios satisfechos que han transformado su flujo de trabajo con nuestra solución.",
+            "button": "Comienza gratis"
+        },
+        "footer": {
+            "product": {
+                "title": "Producto",
+                "features": "Características",
+                "pricing": "Precios",
+                "documentation": "Documentación"
+            },
+            "company": {
+                "title": "Empresa",
+                "about": "Sobre nosotros",
+                "blog": "Blog",
+                "careers": "Empleo"
+            },
+            "resources": {
+                "title": "Recursos",
+                "community": "Comunidad",
+                "contact": "Contacto",
+                "status": "Estado"
+            },
+            "legal": {
+                "title": "Legal",
+                "privacy": "Privacidad",
+                "terms": "Términos",
+                "security": "Seguridad"
+            }
+        }
+    }
+}

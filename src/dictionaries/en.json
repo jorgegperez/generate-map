@@ -1,0 +1,63 @@
+{
+    "landing": {
+        "navigation": {
+            "documentation": "Documentation",
+            "resources": "Resources",
+            "pricing": "Pricing",
+            "login": "Login",
+            "signup": "Sign up"
+        },
+        "hero": {
+            "title": "The solution you need, effortlessly",
+            "subtitle": "Meet the modern standard for your needs. Beautiful out of the box, easy to maintain, and built to convert users.",
+            "getStarted": "Get Started",
+            "getDemo": "Get a demo"
+        },
+        "features": {
+            "title": "Features",
+            "lightning": {
+                "title": "Lightning Fast",
+                "description": "Experience blazing fast performance with our optimized infrastructure."
+            },
+            "customizable": {
+                "title": "Fully Customizable",
+                "description": "Adapt every aspect to match your brand and requirements."
+            },
+            "security": {
+                "title": "Enterprise Security",
+                "description": "Bank-grade security to keep your data safe and protected."
+            }
+        },
+        "cta": {
+            "title": "Ready to get started?",
+            "subtitle": "Join thousands of satisfied users who have transformed their workflow with our solution.",
+            "button": "Start for free"
+        },
+        "footer": {
+            "product": {
+                "title": "Product",
+                "features": "Features",
+                "pricing": "Pricing",
+                "documentation": "Documentation"
+            },
+            "company": {
+                "title": "Company",
+                "about": "About",
+                "blog": "Blog",
+                "careers": "Careers"
+            },
+            "resources": {
+                "title": "Resources",
+                "community": "Community",
+                "contact": "Contact",
+                "status": "Status"
+            },
+            "legal": {
+                "title": "Legal",
+                "privacy": "Privacy",
+                "terms": "Terms",
+                "security": "Security"
+            }
+        }
+    }
+}
