@@ -3,11 +3,11 @@
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getServerSession, Session } from "next-auth";
 import { File, IFile } from "@/models/File";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { connectDB } from "@/lib/mongodb";
 
 import { EProcessingStatus } from "@/constants";
 import { extractMarkdown } from "./processFile";
+import { authOptions } from "@/lib/auth";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION!,

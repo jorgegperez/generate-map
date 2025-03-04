@@ -1,3 +1,4 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   // For Turbopack setups
   experimental: {
@@ -7,8 +8,8 @@ const nextConfig = {
       },
     },
   },
-
-  // For Next.js versions prior to v15
+  // Disable static optimization for protected routes
+  staticPageGenerationTimeout: 120,
 };
 
 export default nextConfig;
