@@ -7,12 +7,37 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import Link from "next/link";
 import "@/lib/i18n-client";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { useLocaleStore } from "@/store/useLocaleStore";
+import { useEffect, useState } from "react";
+import { i18n as i18nConfig } from "@/lib/i18n-config";
 
 export function HomeContent({ session }: { session: Session | null }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = useLocaleStore(
+    (state) => state.locale || i18nConfig.defaultLocale
+  );
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (i18n.language !== locale) {
+      i18n.changeLanguage(locale);
+    }
+  }, [locale, i18n]);
+
+  // Return a loading state or simplified content during SSR
+  if (!isClient) {
+    return <div suppressHydrationWarning>Loading...</div>;
+  }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div
+      className="min-h-screen bg-background flex flex-col"
+      suppressHydrationWarning
+    >
       {/* Header */}
       <header className="fixed w-full bg-card/80 backdrop-blur-sm z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

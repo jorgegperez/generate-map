@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { useLocaleStore } from "@/store/useLocaleStore";
 import { i18n } from "@/lib/i18n-config";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -65,11 +64,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const locale = useLocaleStore.getState().locale || i18n.defaultLocale;
-
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body className={inter.className}>
+    <html lang={i18n.defaultLocale} suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
