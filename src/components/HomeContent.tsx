@@ -3,7 +3,6 @@
 import { Session } from "next-auth";
 import { useTranslation, Trans } from "react-i18next";
 import UserMenu from "@/components/UserMenu";
-import { ThemeToggle } from "@/components/ThemeToggle";
 import Link from "next/link";
 import "@/lib/i18n-client";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -64,7 +63,6 @@ export function HomeContent({ session }: { session: Session | null }) {
               >
                 Pricing
               </Link>
-              <ThemeToggle />
               <LanguageSwitcher />
               {session ? (
                 <UserMenu userName={session.user?.name} />

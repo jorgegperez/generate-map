@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Moon, Sun } from "lucide-react"; // Assuming you use lucide icons
+import { Moon, Sun } from "lucide-react";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -34,7 +34,7 @@ export function ThemeToggle() {
         e.preventDefault();
         setTheme(theme === "light" ? "dark" : "light");
       }}
-      className="p-2 rounded-full bg-secondary text-secondary-foreground"
+      className="p-2 rounded-[4px] bg-foreground text-background border border-background"
       aria-label="Toggle theme"
     >
       {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}

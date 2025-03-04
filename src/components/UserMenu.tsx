@@ -21,13 +21,13 @@ export default function UserMenu({ userName }: UserMenuProps) {
       <DropdownMenuTrigger asChild>
         <button className="outline-none">
           <Avatar>
-            <AvatarFallback className="bg-primary hover:bg-primary/90 text-white">
+            <AvatarFallback className="bg-primary hover:bg-primary/90 text-white ">
               {userName ? userName[0].toUpperCase() : "?"}
             </AvatarFallback>
           </Avatar>
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-42">
         <DropdownMenuLabel>{userName}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => signOut()}>
