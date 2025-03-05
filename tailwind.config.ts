@@ -62,6 +62,27 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      animation: {
+        glow: "glow 3s ease-in-out infinite",
+      },
+      keyframes: {
+        glow: {
+          "0%, 100%": {
+            opacity: "0.8",
+            transform: "scale(0.98)",
+          },
+          "50%": {
+            opacity: "0.9",
+            transform: "scale(1.02)",
+          },
+        },
+      },
+      boxShadow: {
+        primary: "0 0 14px rgba(var(--primary), 0.3)",
+        lg: "var(--shadow-lg)",
+        md: "var(--shadow-md)",
+        sm: "var(--shadow-sm)",
+      },
     },
     fontSize: {
       xs: "12px",

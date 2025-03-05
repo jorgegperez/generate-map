@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import Script from "next/script";
 import { Suspense } from "react";
 import Loading from "./loading";
-import { HomeContent } from "@/components/HomeContent";
+import Landing from "@/components/Landing/Landing";
 
 export const metadata: Metadata = {
   title: "The Solution You Need, Effortlessly",
@@ -78,7 +78,7 @@ export default async function Home() {
       />
 
       <Suspense fallback={<Loading />}>
-        <HomeContent session={session} />
+        <Landing session={session} />
       </Suspense>
     </>
   );

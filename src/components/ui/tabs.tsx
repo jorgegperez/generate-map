@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
@@ -39,16 +40,36 @@ TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content> & {
+    direction?: number;
+  }
+>(({ className, direction = 1, ...props }, ref) => (
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
       "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       className
     )}
+    asChild
     {...props}
-  />
+  >
+    <motion.div
+      key={props.value}
+      initial={{ x: direction > 0 ? 200 : -200, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: direction > 0 ? -200 : 200, opacity: 0 }}
+      transition={{
+        duration: 0.3,
+        ease: "easeInOut",
+      }}
+      style={{
+        position: "absolute",
+        width: "100%",
+      }}
+    >
+      {props.children}
+    </motion.div>
+  </TabsPrimitive.Content>
 ));
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 

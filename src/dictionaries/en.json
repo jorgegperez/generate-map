@@ -8,10 +8,31 @@
             "signup": "Sign up"
         },
         "hero": {
-            "title": "The solution you need, <emphasis>effortlessly</emphasis>",
-            "subtitle": "Meet the modern standard for your needs. Beautiful out of the box, easy to maintain, and built to convert users.",
-            "getStarted": "Get Started",
-            "getDemo": "Get a demo"
+            "title": "Your smart ally for <emphasis>faster learning</emphasis>.",
+            "description": "Optimize your study method with AI. Transform documents and notes into summaries, mind maps, flashcards, and quizzes automatically. Learn faster, remember better, and study without complications.",
+            "inputPlaceholder": "Your email...",
+            "wishlistTitle": "All the key content in one click.",
+            "joinWishlist": "Join the waitlist",
+            "join": "Join",
+            "features": {
+                "mindmap": {
+                    "title": "🧠 Mind Maps",
+                    "key1": "Organize ideas visually and clearly.",
+                    "key2": "Our AI transforms your texts into intuitive mind maps, helping you grasp complex concepts at a glance.",
+                    "key3": "Connect key ideas, structure your study sessions, and learn more effectively."
+                },
+                "summaries": {
+                    "title": "📄 Smart Summaries",
+                    "key1": "Say goodbye to endless reading.",
+                    "key2": "Our AI extracts the most important information from any text and turns it into concise, easy-to-understand summaries.",
+                    "key3": "Save time, focus on what really matters, and study smarter."
+                },
+                "quizzes": {
+                    "title": "✅ Interactive Quizzes",
+                    "key1": "Test your knowledge with automatically generated quizzes based on your notes.",
+                    "key2": "Reinforce learning, identify knowledge gaps, and prepare for exams with ease—no extra effort needed."
+                }
+            }
         },
         "features": {
             "title": "Features",

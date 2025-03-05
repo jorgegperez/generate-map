@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-text-primary shadow hover:bg-primary-hover",
+        default: "bg-primary text-white shadow hover:bg-primary-hover",
         destructive:
           "bg-accent text-text-primary shadow-sm hover:bg-accent-hover",
         outline:
@@ -20,6 +20,9 @@ const buttonVariants = cva(
         link: "text-primary-light underline-offset-4 hover:underline",
         iconRoundOutline:
           "!py-0 !px-[10px] rounded-full bg-secondary-dark text-text-primary hover:bg-secondary-light  flex items-center justify-center",
+        tab: "bg-secondary-dark text-text-primary hover:bg-accent hover:text-white",
+        tabActive:
+          "bg-secondary-light text-text-primary hover:bg-accent hover:text-white border-b-2 border-b-accent",
       },
       size: {
         default: "h-9 px-4 py-2",

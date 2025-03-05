@@ -71,7 +71,7 @@ export default function MindMap() {
   };
 
   return (
-    <div className="h-[calc(100vh-4rem)] flex w-full relative">
+    <div className="h-[100vh] flex w-full relative">
       <ReactFlow
         nodes={nodes}
         edges={edges}

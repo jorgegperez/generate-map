@@ -8,10 +8,31 @@
             "signup": "Registrarse"
         },
         "hero": {
-            "title": "La solución que necesitas, <emphasis>sin esfuerzo</emphasis>",
-            "subtitle": "Conoce el estándar moderno para tus necesidades. Hermoso desde el primer momento, fácil de mantener y diseñado para convertir usuarios.",
-            "getStarted": "Comenzar",
-            "getDemo": "Ver demo"
+            "title": "Tu aliado inteligente para <emphasis>aprender más rápido</emphasis>.",
+            "description": "Optimiza tu forma de estudiar con inteligencia artificial. Transforma documentos y apuntes en resúmenes, mapas mentales, flashcards y tests automáticamente. Aprende más rápido, memoriza mejor y estudia sin complicaciones.",
+            "inputPlaceholder": "Tu email...",
+            "wishlistTitle": "Todo el contenido clave en un clic.",
+            "joinWishlist": "Únete a la lista de espera",
+            "join": "Unirse",
+            "features": {
+                "mindmap": {
+                    "title": "🧠 Mapas Mentales",
+                    "key1": "Organiza ideas de manera visual y clara.",
+                    "key2": "Nuestra IA transforma tus textos en mapas mentales intuitivos para que comprendas conceptos complejos de un vistazo.",
+                    "key3": "Relaciona información, conecta ideas clave y estudia de forma más estructurada y efectiva."
+                },
+                "summaries": {
+                    "title": "📄 Resúmenes Inteligentes",
+                    "key1": "Di adiós a leer páginas interminables.",
+                    "key2": "Nuestra IA extrae lo esencial de cualquier texto y lo convierte en resúmenes concisos y fáciles de entender.",
+                    "key3": "Ahorra tiempo, filtra la información importante y céntrate en lo que realmente importa."
+                },
+                "quizzes": {
+                    "title": "✅ Tests Interactivos",
+                    "key1": "Pon a prueba tus conocimientos con cuestionarios generados automáticamente a partir de tus apuntes.",
+                    "key2": "Refuerza el aprendizaje, detecta lagunas de conocimiento y prepárate mejor para exámenes sin esfuerzo extra."
+                }
+            }
         },
         "features": {
             "title": "Características",
