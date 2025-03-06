@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 import { i18n as i18nConfig } from "@/lib/i18n-config";
 import Loading from "@/app/loading";
 import Footer from "./components/Footer";
-import Features from "./components/Features";
 import { HeroSection } from "./components/HeroSection";
 import CtaSection from "./components/CtaSection";
 import Header from "./components/Header";
@@ -41,7 +40,6 @@ export default function Landing({ session }: { session: Session | null }) {
       <main className="flex-1">
         <div>
           <HeroSection />
-          <Features />
           <CtaSection />
         </div>
       </main>

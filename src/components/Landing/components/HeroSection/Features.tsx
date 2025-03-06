@@ -38,7 +38,7 @@ export const Features = () => {
   };
 
   return (
-    <div className="absolute top-8 left-1/2 -translate-x-1/2 w-full h-full p-4 md:p-16">
+    <div className=" w-full h-full p-4 md:p-16 z-2">
       <div className="flex items-center justify-center gap-4 mb-8 overflow-x-auto">
         <Button
           variant={activeTab === 0 ? "tabActive" : "tab"}

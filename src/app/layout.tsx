@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { i18n } from "@/lib/i18n-config";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ThemeProvider } from "@/hooks/useTheme";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -68,12 +69,14 @@ export default function RootLayout({
   return (
     <html lang={i18n.defaultLocale} suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <Providers>
-          <div className="w-full h-full relative">{children}</div>
-          <div className="sticky bottom-6 pl-6">
-            <ThemeToggle />
-          </div>
-        </Providers>
+        <ThemeProvider>
+          <Providers>
+            <div className="w-full h-full relative">{children}</div>
+            <div className="sticky bottom-6 pl-6">
+              <ThemeToggle />
+            </div>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );
